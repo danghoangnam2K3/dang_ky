@@ -1,0 +1,1781 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Hệ thống quản lý và đăng ký kiểm tra thiết bị giám sát thời gian và quãng đường học thực hành lái xe (DAT). Hỗ trợ đăng ký cùng lúc nhiều học viên.">
+    <meta name="keywords" content="đăng ký DAT, kiểm tra DAT, đào tạo lái xe, quản lý học viên, DAT học lái xe">
+    <title>Hệ Thống Đăng Ký Kiểm Tra DAT - Quản Lý Học Viên</title>
+
+    <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Tailwind CSS v3 CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', '"Inter"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            200: '#c7d2fe',
+                            300: '#a5b4fc',
+                            400: '#818cf8',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            800: '#3730a3',
+                            900: '#312e81',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #1e293b;
+            min-height: 100vh;
+        }
+
+        /* Gradient background mượt mà */
+        .page-bg {
+            background: radial-gradient(circle at 15% 15%, rgba(79, 70, 229, 0.08) 0%, transparent 40%),
+                        radial-gradient(circle at 85% 85%, rgba(14, 165, 233, 0.08) 0%, transparent 40%),
+                        #f8fafc;
+        }
+
+        /* Glassmorphism Header */
+        .glass-header {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 7px;
+            height: 7px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Tab Active Indicator Transition */
+        .nav-tab {
+            position: relative;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .nav-tab.active {
+            color: #4f46e5;
+            background-color: #eef2ff;
+        }
+        .nav-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 12px;
+            right: 12px;
+            height: 3px;
+            background: linear-gradient(90deg, #4f46e5, #06b6d4);
+            border-radius: 3px 3px 0 0;
+        }
+
+        /* Toast animation */
+        @keyframes slideInRight {
+            from {
+                transform: translateX(110%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        .toast-animate {
+            animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Print styles */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                background: #ffffff !important;
+                color: #000000 !important;
+            }
+            .print-only {
+                display: block !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="page-bg min-h-screen flex flex-col antialiased">
+
+    <!-- ==================== HEADER NAVIGATION ==================== -->
+    <header class="glass-header sticky top-0 z-40 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- Logo & Brand Title -->
+                <div class="flex items-center gap-3.5">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-600 via-indigo-600 to-cyan-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25 ring-4 ring-indigo-50">
+                        <i class="fa-solid fa-car-side text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-800 bg-clip-text text-transparent">
+                                DAT PRO
+                            </span>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-indigo-100 text-indigo-700 tracking-wide border border-indigo-200">
+                                v2.5
+                            </span>
+                        </div>
+                        <p class="text-xs font-medium text-slate-500 hidden sm:block">
+                            Cổng Đăng Ký Kiểm Tra Giám Sát DAT Đào Tạo Lái Xe
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Navigation Tabs (ĐĂNG KÝ & LỊCH SỬ ĐĂNG KÝ) -->
+                <nav class="flex items-center p-1.5 bg-slate-100/90 rounded-2xl border border-slate-200/80 shadow-inner" aria-label="Tabs" id="mainNavBar">
+                    
+                    <!-- TAB 1: ĐĂNG KÝ -->
+                    <button type="button" id="tabBtnRegister" onclick="switchTab('register')"
+                        class="nav-tab active flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:text-indigo-600 focus:outline-none transition-all">
+                        <i class="fa-solid fa-file-signature text-base"></i>
+                        <span>Đăng Ký</span>
+                        <span id="badgeRegisterCount" class="inline-flex items-center justify-center px-2 py-0.5 text-xs font-semibold bg-indigo-600 text-white rounded-full">
+                            1
+                        </span>
+                    </button>
+
+                    <!-- TAB 2: LỊCH SỬ ĐĂNG KÝ -->
+                    <button type="button" id="tabBtnHistory" onclick="switchTab('history')"
+                        class="nav-tab flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:text-indigo-600 focus:outline-none transition-all">
+                        <i class="fa-solid fa-clock-rotate-left text-base"></i>
+                        <span>Lịch Sử Đăng Ký</span>
+                        <span id="badgeHistoryCount" class="inline-flex items-center justify-center px-2 py-0.5 text-xs font-semibold bg-slate-200 text-slate-700 rounded-full">
+                            0
+                        </span>
+                    </button>
+                </nav>
+
+                <!-- Quick Action Buttons -->
+                <div class="hidden lg:flex items-center gap-2.5">
+                    <button type="button" onclick="openConfigModal()" title="Cài đặt kết nối Google Sheet"
+                        class="p-2.5 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition border border-transparent hover:border-indigo-100">
+                        <i class="fa-solid fa-sliders text-base"></i>
+                    </button>
+                    <a href="javascript:void(0)" onclick="openHelpModal()"
+                        class="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl shadow-sm transition">
+                        <i class="fa-regular fa-circle-question text-indigo-600"></i>
+                        <span>Hướng dẫn</span>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== MAIN CONTENT AREA ==================== -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- ======================================================== -->
+        <!-- VIEW 1: TAB ĐĂNG KÝ (HỖ TRỢ ĐĂNG KÝ CÙNG LÚC NHIỀU TÊN)   -->
+        <!-- ======================================================== -->
+        <section id="viewRegister" class="space-y-6">
+            
+            <!-- Banner Thông Báo Tiêu Đề -->
+            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-900 via-indigo-800 to-blue-900 text-white p-6 sm:p-8 shadow-xl shadow-indigo-950/10">
+                <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-cyan-300 text-xs font-semibold mb-3 border border-white/10">
+                            <i class="fa-solid fa-users-gear"></i>
+                            Đăng ký theo nhóm học viên
+                        </div>
+                        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+                            Đăng Ký Kiểm Tra Phiên Học DAT
+                        </h1>
+                        <p class="text-indigo-200 text-sm mt-1.5 max-w-2xl">
+                            Điền thông tin khóa đào tạo, giáo viên và nhập danh sách nhiều học viên cùng lúc để tự động gửi dữ liệu đồng bộ vào Google Sheet.
+                        </p>
+                    </div>
+
+                    <!-- Nút thao tác nhanh trên banner -->
+                    <div class="flex items-center gap-3">
+                        <button type="button" onclick="openBulkInputModal()"
+                            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm shadow-lg shadow-cyan-500/30 transition transform hover:-translate-y-0.5 active:translate-y-0">
+                            <i class="fa-solid fa-paste"></i>
+                            <span>Dán Nhanh Danh Sách</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Đăng Ký Chính (Đã gộp thành 1 thẻ duy nhất) -->
+            <form id="datForm" class="space-y-6" onsubmit="handleFormSubmit(event)">
+                
+                <!-- THẺ DUY NHẤT: CHỨA ĐẦY ĐỦ THÔNG TIN KHÓA HỌC, GIÁO VIÊN, GHI CHÚ VÀ DANH SÁCH HỌC VIÊN -->
+                <div class="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 sm:p-8 space-y-6">
+                    
+                    <!-- Header của Thẻ -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-5 border-b border-slate-100 gap-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-600 to-cyan-500 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-indigo-500/20">
+                                <i class="fa-solid fa-file-pen text-base"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h2 class="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">Thông Tin Đăng Ký Kiểm Tra DAT</h2>
+                                    <span id="studentTotalBadge" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-50 text-indigo-600 border border-indigo-200">
+                                        1 học viên
+                                    </span>
+                                </div>
+                                <p class="text-xs text-slate-500 mt-0.5">Nhập thông tin khóa học, giáo viên và danh sách học viên đăng ký</p>
+                            </div>
+                        </div>
+
+                        <!-- Các nút thao tác nhanh trên danh sách -->
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button type="button" onclick="openBulkInputModal()"
+                                class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-xl bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 transition">
+                                <i class="fa-solid fa-list-check"></i>
+                                <span>Dán nhiều tên</span>
+                            </button>
+
+                            <button type="button" onclick="addNewStudentRow()"
+                                class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm shadow-indigo-500/20 transition">
+                                <i class="fa-solid fa-plus"></i>
+                                <span>+ Thêm học viên</span>
+                            </button>
+
+                            <button type="button" onclick="clearAllStudentRows()" title="Xóa tất cả danh sách"
+                                class="inline-flex items-center justify-center w-8 h-8 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition border border-slate-200">
+                                <i class="fa-regular fa-trash-can text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- PHẦN 1: THÔNG TIN KHÓA HỌC, GIÁO VIÊN & GHI CHÚ -->
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                            
+                            <!-- Khóa học -->
+                            <div>
+                                <label for="course" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                                    <i class="fa-solid fa-graduation-cap text-indigo-500 mr-1.5"></i>
+                                    Khóa học <span class="text-rose-500">*</span>
+                                </label>
+                                <input type="text" id="course" required placeholder="Ví dụ: Khóa B2 - K35" list="courseSuggestions"
+                                    class="w-full px-4 py-2.5 bg-slate-50/70 border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition font-medium text-sm">
+                                <datalist id="courseSuggestions">
+                                    <option value="Khóa B11 - Tự Động K40">
+                                    <option value="Khóa B2 - Số Sàn K35">
+                                    <option value="Khóa C - Tải K22">
+                                    <option value="Nâng hạng D - K15">
+                                </datalist>
+                            </div>
+
+                            <!-- Giáo viên phụ trách -->
+                            <div>
+                                <label for="teacher" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                                    <i class="fa-solid fa-chalkboard-user text-indigo-500 mr-1.5"></i>
+                                    Giáo viên phụ trách <span class="text-rose-500">*</span>
+                                </label>
+                                <input type="text" id="teacher" required placeholder="Ví dụ: Thầy Nguyễn Văn Tuấn"
+                                    class="w-full px-4 py-2.5 bg-slate-50/70 border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition font-medium text-sm">
+                            </div>
+
+                            <!-- Ngày dự kiến kiểm tra / Ngày nộp -->
+                            <div>
+                                <label for="regDate" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                                    <i class="fa-solid fa-calendar-day text-indigo-500 mr-1.5"></i>
+                                    Ngày kiểm tra DAT
+                                </label>
+                                <input type="date" id="regDate"
+                                    class="w-full px-4 py-2.5 bg-slate-50/70 border border-slate-300 rounded-xl text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition font-medium text-sm">
+                            </div>
+
+                            <!-- Ghi chú chung -->
+                            <div class="md:col-span-2 lg:col-span-3">
+                                <label for="commonNote" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                                    <i class="fa-regular fa-note-sticky text-indigo-500 mr-1.5"></i>
+                                    Ghi chú (tùy chọn)
+                                </label>
+                                <input type="text" id="commonNote" placeholder="Ví dụ: Đăng ký ca sáng xe 14 / Thi thử DAT đợt 1..."
+                                    class="w-full px-4 py-2.5 bg-slate-50/70 border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition font-medium text-sm">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PHẦN 2: DANH SÁCH HỌC VIÊN (HỌ TÊN, NGÀY SINH, GHI CHÚ) -->
+                    <div class="pt-5 border-t border-slate-200/80 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                                <i class="fa-solid fa-users text-indigo-600"></i>
+                                Danh Sách Học Viên Đăng Ký (Có thể thêm cùng lúc nhiều người)
+                            </h3>
+                            <button type="button" onclick="addNewStudentRow()"
+                                class="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1.5 py-1 px-2 rounded-lg hover:bg-indigo-50 transition">
+                                <i class="fa-solid fa-circle-plus"></i>
+                                Thêm dòng
+                            </button>
+                        </div>
+
+                        <!-- Bảng danh sách học viên động -->
+                        <div class="overflow-x-auto rounded-2xl border border-slate-200/90 shadow-inner">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-50/90 text-slate-600 text-xs font-bold uppercase tracking-wider border-b border-slate-200">
+                                        <th class="py-3 px-3 w-12 text-center">STT</th>
+                                        <th class="py-3 px-4 min-w-[220px]">
+                                            Họ và tên học viên <span class="text-rose-500">*</span>
+                                        </th>
+                                        <th class="py-3 px-4 min-w-[170px]">
+                                            Ngày sinh <span class="text-rose-500">*</span>
+                                        </th>
+                                        <th class="py-3 px-4 min-w-[200px]">
+                                            SĐT / Ghi chú riêng
+                                        </th>
+                                        <th class="py-3 px-3 w-16 text-center">Xóa</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="studentListContainer" class="divide-y divide-slate-100 text-sm bg-white">
+                                    <!-- Các dòng học viên được render động ở đây -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row items-center justify-between gap-2 pt-1">
+                            <p class="text-xs text-slate-500 flex items-center gap-1.5">
+                                <i class="fa-solid fa-lightbulb text-amber-500"></i>
+                                Mẹo: Bấm <span class="font-bold text-slate-700">Tab</span> hoặc phím <span class="font-bold text-slate-700">Enter</span> để chuyển nhanh giữa các ô nhập.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- PHẦN 3: NÚT GỬI ĐĂNG KÝ VÀ TIẾN TRÌNH (NGAY TRONG THẺ) -->
+                    <div class="pt-5 border-t border-slate-200/80">
+                        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                            <div>
+                                <h4 class="text-sm font-bold text-slate-800">Xác nhận gửi hồ sơ đăng ký</h4>
+                                <p class="text-xs text-slate-500 mt-0.5" id="summaryDescription">
+                                    Đang chuẩn bị gửi đăng ký cho <span class="font-bold text-indigo-600" id="summaryStudentCount">1</span> học viên vào bảng tính Google Sheet.
+                                </p>
+                            </div>
+
+                            <div class="flex items-center gap-3 w-full md:w-auto">
+                                <button type="button" onclick="resetFullForm()"
+                                    class="px-5 py-3 rounded-xl border border-slate-300 text-slate-700 font-bold text-xs sm:text-sm hover:bg-slate-50 transition">
+                                    Làm mới
+                                </button>
+
+                                <button type="submit" id="submitBtn"
+                                    class="flex-1 md:flex-initial inline-flex items-center justify-center gap-2.5 px-8 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-brand-600 hover:from-indigo-700 hover:to-brand-700 text-white font-bold text-xs sm:text-sm shadow-lg shadow-indigo-600/30 transition transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <i class="fa-solid fa-paper-plane text-sm"></i>
+                                    <span id="submitBtnText">Gửi Đăng Ký (1 Học Viên)</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Progress Bar khi gửi nhiều học viên -->
+                        <div id="progressWrapper" class="hidden mt-5 pt-4 border-t border-slate-100">
+                            <div class="flex items-center justify-between text-xs font-semibold text-slate-600 mb-2">
+                                <span id="progressStatusText">Đang gửi dữ liệu lên máy chủ...</span>
+                                <span id="progressPercent">0%</span>
+                            </div>
+                            <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                                <div id="progressBar" class="h-full bg-gradient-to-r from-indigo-500 to-cyan-500 transition-all duration-300" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Thông báo trạng thái kết quả -->
+                        <div id="statusMessage" class="hidden mt-4 p-4 rounded-xl text-sm font-semibold text-center transition-all"></div>
+                    </div>
+
+                </div>
+
+            </form>
+
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- VIEW 2: TAB LỊCH SỬ ĐĂNG KÝ                             -->
+        <!-- ======================================================== -->
+        <section id="viewHistory" class="hidden space-y-6">
+            
+            <!-- Header của Tab Lịch Sử -->
+            <div class="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 sm:p-8">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-100">
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-bold mb-2">
+                            <i class="fa-solid fa-clock-rotate-left"></i>
+                            Nhật ký đăng ký trực tuyến
+                        </div>
+                        <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">
+                            Lịch Sử Các Đợt Đăng Ký DAT
+                        </h2>
+                        <p class="text-xs text-slate-500 mt-1">
+                            Xem lại các hồ sơ học viên đã được đăng ký, sao chép lại form hoặc xuất báo cáo Excel/CSV
+                        </p>
+                    </div>
+
+                    <!-- Nút thao tác trên Tab Lịch sử -->
+                    <div class="flex flex-wrap items-center gap-2.5">
+                        <button type="button" onclick="exportHistoryToCSV()"
+                            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 font-bold text-xs transition">
+                            <i class="fa-solid fa-file-excel text-sm"></i>
+                            <span>Xuất File Excel / CSV</span>
+                        </button>
+
+                        <button type="button" onclick="confirmClearHistory()"
+                            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 font-bold text-xs transition">
+                            <i class="fa-regular fa-trash-can text-sm"></i>
+                            <span>Xóa Lịch Sử</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Thống kê nhanh (KPI Cards) -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6">
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/70">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-semibold text-slate-500">Tổng đợt đăng ký</span>
+                            <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm">
+                                <i class="fa-solid fa-folder-open"></i>
+                            </div>
+                        </div>
+                        <div class="mt-2 text-2xl font-extrabold text-slate-800" id="kpiBatchCount">0</div>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/70">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-semibold text-slate-500">Tổng học viên đã gửi</span>
+                            <div class="w-8 h-8 rounded-lg bg-cyan-100 text-cyan-600 flex items-center justify-center text-sm">
+                                <i class="fa-solid fa-user-check"></i>
+                            </div>
+                        </div>
+                        <div class="mt-2 text-2xl font-extrabold text-slate-800" id="kpiStudentCount">0</div>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/70">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-semibold text-slate-500">Đợt đăng ký mới nhất</span>
+                            <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center text-sm">
+                                <i class="fa-solid fa-clock"></i>
+                            </div>
+                        </div>
+                        <div class="mt-2 text-sm font-bold text-slate-800 truncate" id="kpiLatestDate">Chưa có dữ liệu</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bộ Lọc & Tìm Kiếm Lịch Sử -->
+            <div class="bg-white rounded-2xl border border-slate-200/90 p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div class="relative w-full sm:w-80">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input type="text" id="historySearchInput" oninput="renderHistoryList()" placeholder="Tìm theo tên học viên, giáo viên, khóa..."
+                        class="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div class="text-xs text-slate-500 flex items-center gap-2">
+                    <span>Sắp xếp:</span>
+                    <span class="font-bold text-slate-700">Mới nhất trước</span>
+                </div>
+            </div>
+
+            <!-- Danh Sách Lịch Sử -->
+            <div id="historyListContainer" class="space-y-4">
+                <!-- Nội dung lịch sử được render động tại đây -->
+            </div>
+
+            <!-- Empty State nếu chưa có lịch sử -->
+            <div id="historyEmptyState" class="hidden bg-white rounded-3xl border border-slate-200/80 p-12 text-center">
+                <div class="w-20 h-20 mx-auto rounded-3xl bg-indigo-50 text-indigo-500 flex items-center justify-center text-3xl mb-4">
+                    <i class="fa-regular fa-folder-open"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-800">Chưa có lịch sử đăng ký nào</h3>
+                <p class="text-xs sm:text-sm text-slate-500 max-w-sm mx-auto mt-1 mb-6">
+                    Các thông tin đăng ký kiểm tra DAT của bạn sẽ được tự động lưu trữ tại đây sau khi gửi thành công.
+                </p>
+                <button type="button" onclick="switchTab('register')"
+                    class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md transition">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Tạo Đăng Ký Ngay</span>
+                </button>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- ==================== MODAL: DÁN NHANH DANH SÁCH ==================== -->
+    <div id="bulkInputModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-opacity">
+        <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-slate-100 max-h-[90vh] flex flex-col">
+            
+            <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-cyan-100 text-cyan-700 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-paste"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-800">Dán Nhanh Nhiều Học Viên</h3>
+                        <p class="text-xs text-slate-500">Sao chép từ Excel hoặc danh sách văn bản và dán vào đây</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeBulkInputModal()" class="text-slate-400 hover:text-slate-600 p-2 text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="py-4 space-y-3 flex-1 overflow-y-auto">
+                <div class="p-3.5 rounded-xl bg-indigo-50 border border-indigo-100 text-xs text-indigo-900 space-y-1">
+                    <p class="font-bold flex items-center gap-1.5">
+                        <i class="fa-solid fa-circle-info"></i> Định dạng hỗ trợ:
+                    </p>
+                    <ul class="list-disc list-inside space-y-0.5 text-indigo-800/90 pl-1">
+                        <li>Mỗi dòng là 1 học viên (ví dụ: <span class="font-mono font-semibold">Nguyễn Văn An</span>).</li>
+                        <li>Hoặc kèm ngày sinh cách nhau bởi dấu phẩy, tab hoặc gạch ngang (ví dụ: <span class="font-mono font-semibold">Trần Thị Bình, 1998-05-20</span>).</li>
+                        <li>Bạn có thể copy trực tiếp 1 cột Họ tên từ Excel dán vào.</li>
+                    </ul>
+                </div>
+
+                <textarea id="bulkInputTextarea" rows="9" placeholder="Dán danh sách vào đây... Ví dụ:&#10;Nguyễn Văn An&#10;Trần Thị Bình, 1995-10-12&#10;Lê Hoàng Cường&#10;Phạm Minh Đức, 2000-02-25"
+                    class="w-full p-4 border border-slate-300 rounded-2xl text-xs sm:text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50"></textarea>
+            </div>
+
+            <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+                <button type="button" onclick="closeBulkInputModal()"
+                    class="px-5 py-2.5 rounded-xl border border-slate-300 text-slate-700 text-xs font-bold hover:bg-slate-50 transition">
+                    Hủy bỏ
+                </button>
+                <button type="button" onclick="applyBulkInput()"
+                    class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-md transition">
+                    <i class="fa-solid fa-check"></i>
+                    <span>Thêm Vào Danh Sách</span>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: CHI TIẾT ĐỢT ĐĂNG KÝ ==================== -->
+    <div id="historyDetailModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl max-w-3xl w-full p-6 sm:p-8 shadow-2xl border border-slate-100 max-h-[90vh] flex flex-col">
+            
+            <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-list-check"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-800" id="modalDetailTitle">Chi Tiết Đợt Đăng Ký</h3>
+                        <p class="text-xs text-slate-500" id="modalDetailSubtitle">Ngày gửi: --</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeHistoryDetailModal()" class="text-slate-400 hover:text-slate-600 p-2 text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="py-4 space-y-4 flex-1 overflow-y-auto">
+                <!-- Thông tin tóm tắt -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 bg-slate-50 rounded-2xl text-xs">
+                    <div>
+                        <span class="text-slate-400 block font-medium">Khóa học:</span>
+                        <span class="font-bold text-slate-800" id="modalDetailCourse">--</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block font-medium">Giáo viên:</span>
+                        <span class="font-bold text-slate-800" id="modalDetailTeacher">--</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block font-medium">Số học viên:</span>
+                        <span class="font-bold text-indigo-600" id="modalDetailCount">--</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block font-medium">Trạng thái:</span>
+                        <span class="font-bold text-emerald-600" id="modalDetailStatus">Đã lưu Google Sheet</span>
+                    </div>
+                </div>
+
+                <!-- Bảng danh sách học viên trong đợt -->
+                <div class="overflow-x-auto rounded-2xl border border-slate-200">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                                <th class="py-2.5 px-3 text-center w-12">STT</th>
+                                <th class="py-2.5 px-4">Họ và tên</th>
+                                <th class="py-2.5 px-4">Ngày sinh</th>
+                                <th class="py-2.5 px-4">Ghi chú</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modalDetailStudentTable" class="divide-y divide-slate-100">
+                            <!-- Dòng học viên -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+                <button type="button" id="modalPrintBtn" onclick="printCurrentDetail()"
+                    class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 text-xs font-bold hover:bg-slate-50 transition">
+                    <i class="fa-solid fa-print"></i>
+                    <span>In Phiếu A4</span>
+                </button>
+                <button type="button" onclick="closeHistoryDetailModal()"
+                    class="px-6 py-2.5 rounded-xl bg-slate-800 text-white text-xs font-bold hover:bg-slate-900 transition">
+                    Đóng
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: CẤU HÌNH WEB APP URL ==================== -->
+    <div id="configModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-100">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-sliders"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base sm:text-lg font-bold text-slate-800">Cấu Hình Kết Nối Google Sheet</h3>
+                        <p class="text-xs text-slate-500">Google Apps Script Web App URL</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeConfigModal()" class="text-slate-400 hover:text-slate-600 p-2">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="py-4 space-y-4">
+                <div>
+                    <label for="configUrlInput" class="block text-xs font-bold text-slate-700 mb-1.5">
+                        Đường dẫn Web App URL hiện tại:
+                    </label>
+                    <input type="text" id="configUrlInput"
+                        class="w-full px-4 py-2.5 border border-slate-300 rounded-xl text-xs font-mono text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50">
+                </div>
+
+                <!-- Nút kiểm tra kết nối -->
+                <div class="flex items-center justify-between gap-2 pt-1">
+                    <button type="button" onclick="testConnection()" id="btnTestConnection"
+                        class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition">
+                        <i class="fa-solid fa-plug-circle-bolt text-indigo-600"></i>
+                        <span>Kiểm tra kết nối ngay</span>
+                    </button>
+                    <button type="button" onclick="openAppsScriptGuideModal()"
+                        class="text-xs text-indigo-600 hover:text-indigo-800 font-bold flex items-center gap-1">
+                        <i class="fa-solid fa-circle-question"></i>
+                        <span>Cách lấy link & sửa lỗi 403</span>
+                    </button>
+                </div>
+
+                <!-- Kết quả kiểm tra kết nối -->
+                <div id="testConnectionResult" class="hidden p-3 rounded-xl text-xs font-semibold"></div>
+            </div>
+
+            <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-2">
+                <button type="button" onclick="closeConfigModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100">Đóng</button>
+                <button type="button" onclick="saveConfigUrl()" class="px-5 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition">Lưu cấu hình</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: HƯỚNG DẪN CẤP QUYỀN GOOGLE APPS SCRIPT (SỬA LỖI 403) ==================== -->
+    <div id="appsScriptGuideModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-slate-100 max-h-[90vh] flex flex-col">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base sm:text-lg font-bold text-slate-800">Khắc Phục Lỗi Google Sheet Không Nhận Dữ Liệu</h3>
+                        <p class="text-xs text-rose-500 font-semibold">Nguyên nhân: Quyền truy cập bị chặn (Lỗi 403 Forbidden)</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeAppsScriptGuideModal()" class="text-slate-400 hover:text-slate-600 p-2 text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="py-4 space-y-4 flex-1 overflow-y-auto text-xs text-slate-700">
+                <div class="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl text-rose-900 space-y-1">
+                    <p class="font-bold flex items-center gap-1.5 text-rose-800">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        Tại sao gửi báo thành công mà trong Google Sheet không có?
+                    </p>
+                    <p class="leading-relaxed">
+                        Hệ thống đã gửi request kiểm tra tới Web App URL và Google phản hồi: <strong>"Truy cập bị từ chối (403 Forbidden)"</strong>. Điều này xảy ra do khi bạn bấm <em>Triển khai (Deploy)</em> trên Google Sheet, bạn chưa cấp quyền cho <strong>"Bất kỳ ai (Anyone)"</strong> truy cập!
+                    </p>
+                </div>
+
+                <div class="space-y-2">
+                    <h4 class="font-bold text-slate-900 text-sm">Các bước sửa quyền trên Google Sheet (Chỉ 1 phút):</h4>
+                    <ol class="list-decimal list-inside space-y-2 pl-1 leading-relaxed text-slate-600">
+                        <li>Mở file <strong>Google Trang Tính (Google Sheet)</strong> của bạn.</li>
+                        <li>Trên thanh menu, chọn <strong>Tiện ích mở rộng (Extensions)</strong> &gt; <strong>Apps Script</strong>.</li>
+                        <li>Ở góc trên bên phải, bấm nút <strong>Triển khai (Deploy)</strong> &gt; chọn <strong>Quản lý bản triển khai (Manage deployments)</strong> (hoặc Triển khai mới).</li>
+                        <li>Bấm biểu tượng cây bút chì (Chỉnh sửa) hoặc tạo bản mới:
+                            <div class="mt-1.5 ml-4 p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1 font-medium">
+                                <p>• <strong>Thực thi dưới dạng (Execute as):</strong> Chọn <u>Tôi (Me / email của bạn)</u></p>
+                                <p class="text-rose-600 font-bold">• <strong>Ai có quyền truy cập (Who has access):</strong> BẮT BUỘC CHỌN <u>Bất kỳ ai (Anyone)</u></p>
+                            </div>
+                        </li>
+                        <li>Bấm <strong>Triển khai (Deploy)</strong>, bấm cấp quyền nếu Google hỏi, sau đó <strong>Sao chép Web App URL mới</strong>.</li>
+                        <li>Quay lại trang này, dán URL mới vào ô Cài đặt và bấm <strong>Lưu cấu hình</strong>.</li>
+                    </ol>
+                </div>
+
+                <div class="space-y-2 pt-2 border-t border-slate-100">
+                    <div class="flex items-center justify-between">
+                        <h4 class="font-bold text-slate-900">Mã nguồn Google Apps Script chuẩn (Nếu bạn cần tạo mới):</h4>
+                        <button type="button" onclick="copyAppsScriptCode()"
+                            class="inline-flex items-center gap-1 px-3 py-1 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-lg font-bold transition">
+                            <i class="fa-regular fa-copy"></i>
+                            <span>Sao chép code</span>
+                        </button>
+                    </div>
+                    <pre class="p-3.5 bg-slate-900 text-slate-200 rounded-2xl overflow-x-auto text-[11px] font-mono leading-relaxed" id="sampleAppsScriptCode">function doPost(e) {
+  try {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(["Thời gian", "Họ và tên", "Ngày sinh", "Khóa học", "Giáo viên", "Ghi chú"]);
+    }
+    var data = JSON.parse(e.postData.contents);
+    sheet.appendRow([
+      new Date(),
+      data.fullname || "",
+      data.dob || "",
+      data.course || "",
+      data.teacher || "",
+      data.note || ""
+    ]);
+    return ContentService.createTextOutput(JSON.stringify({ result: "success" }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ result: "error", error: err.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function doGet(e) {
+  return ContentService.createTextOutput(JSON.stringify({ status: "online", result: "success" }))
+    .setMimeType(ContentService.MimeType.JSON);
+}</pre>
+                </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+                <button type="button" onclick="closeAppsScriptGuideModal(); openConfigModal();"
+                    class="text-xs font-bold text-indigo-600 hover:underline">
+                    Mở bảng đổi URL
+                </button>
+                <button type="button" onclick="closeAppsScriptGuideModal()"
+                    class="px-6 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition">
+                    Đã hiểu
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: HƯỚNG DẪN SỬ DỤNG ==================== -->
+    <div id="helpModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-100">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                <h3 class="text-base font-bold text-slate-800">Hướng Dẫn Nhanh</h3>
+                <button type="button" onclick="closeHelpModal()" class="text-slate-400 hover:text-slate-600 p-2">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div class="py-4 text-xs text-slate-600 space-y-3">
+                <p>1. <span class="font-bold text-slate-800">Đăng ký nhiều tên:</span> Điền Khóa học &amp; Giáo viên 1 lần, sau đó bấm <span class="text-indigo-600 font-bold">+ Thêm học viên</span> hoặc bấm <span class="text-cyan-600 font-bold">Dán Nhanh Danh Sách</span> để dán nhiều người cùng lúc.</p>
+                <p>2. <span class="font-bold text-slate-800">Xem lịch sử:</span> Bấm vào mục <span class="text-indigo-600 font-bold">Lịch Sử Đăng Ký</span> trên thanh header để xem tất cả các đợt đã nộp, xuất file Excel hoặc in danh sách.</p>
+                <p>3. <span class="font-bold text-rose-600">Lỗi không vào Google Sheet:</span> Bấm vào biểu tượng Cài đặt trên góc phải để kiểm tra kết nối và xem hướng dẫn mở quyền <span class="font-bold text-slate-800">"Anyone"</span>.</p>
+            </div>
+            <div class="pt-3 border-t border-slate-100 text-right">
+                <button type="button" onclick="closeHelpModal()" class="px-5 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700">Đã hiểu</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== TOAST CONTAINER ==================== -->
+    <div id="toastContainer" class="fixed top-24 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="mt-auto py-6 border-t border-slate-200/80 bg-white/70 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <span>© 2026 DAT Pro - Hệ thống quản lý đăng ký kiểm tra thiết bị DAT</span>
+            <span class="text-slate-400">Kết nối Google Trang Tính bảo mật & trực tuyến</span>
+        </div>
+    </footer>
+
+    <!-- ==================== JAVASCRIPT XỬ LÝ TOÀN BỘ ==================== -->
+    <script>
+        // ==========================================
+        // CẤU HÌNH & TRẠNG THÁI TOÀN CỤC
+        // ==========================================
+        const DEFAULT_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyuVzBfNMv-SO_mO5i0rNpkbgzMs0FjmtPEFo5e4_wlnziHSvQHFzllN99JJPDoZUy0sQ/exec";
+        const STORAGE_KEY_HISTORY = "dat_registration_history";
+        const STORAGE_KEY_CONFIG = "dat_webapp_url";
+
+        let currentActiveTab = 'register';
+        let currentDetailBatch = null;
+
+        // ==========================================
+        // KHỞI TẠO ỨNG DỤNG
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', function () {
+            // Thiết lập ngày mặc định là hôm nay
+            const todayStr = new Date().toISOString().split('T')[0];
+            const regDateInput = document.getElementById('regDate');
+            if (regDateInput) regDateInput.value = todayStr;
+
+            // Khởi tạo dòng học viên đầu tiên
+            initStudentRows();
+
+            // Cập nhật badges và hiển thị lịch sử
+            updateBadges();
+            renderHistoryList();
+        });
+
+        function getWebAppUrl() {
+            return localStorage.getItem(STORAGE_KEY_CONFIG) || DEFAULT_WEB_APP_URL;
+        }
+
+        // ==========================================
+        // QUẢN LÝ CHUYỂN TAB (ĐĂNG KÝ / LỊCH SỬ)
+        // ==========================================
+        function switchTab(tabName) {
+            currentActiveTab = tabName;
+            const tabBtnRegister = document.getElementById('tabBtnRegister');
+            const tabBtnHistory = document.getElementById('tabBtnHistory');
+            const viewRegister = document.getElementById('viewRegister');
+            const viewHistory = document.getElementById('viewHistory');
+
+            if (tabName === 'register') {
+                tabBtnRegister.classList.add('active');
+                tabBtnHistory.classList.remove('active');
+                viewRegister.classList.remove('hidden');
+                viewHistory.classList.add('hidden');
+            } else {
+                tabBtnHistory.classList.add('active');
+                tabBtnRegister.classList.remove('active');
+                viewHistory.classList.remove('hidden');
+                viewRegister.classList.add('hidden');
+                renderHistoryList();
+            }
+
+            // Scroll lên đầu trang mượt mà
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ==========================================
+        // QUẢN LÝ DANH SÁCH HỌC VIÊN ĐĂNG KÝ
+        // ==========================================
+        let studentCounter = 0;
+
+        function initStudentRows() {
+            const container = document.getElementById('studentListContainer');
+            container.innerHTML = '';
+            addNewStudentRow();
+        }
+
+        function addNewStudentRow(fullname = '', dob = '', note = '') {
+            studentCounter++;
+            const container = document.getElementById('studentListContainer');
+            const rowId = `student-row-${studentCounter}`;
+
+            const tr = document.createElement('tr');
+            tr.id = rowId;
+            tr.className = "student-item-row hover:bg-slate-50/80 transition-colors duration-150";
+
+            tr.innerHTML = `
+                <td class="py-3 px-3 text-center font-bold text-slate-400 student-stt">
+                    1
+                </td>
+                <td class="py-3 px-4">
+                    <div class="relative">
+                        <input type="text" name="student_fullname" value="${escapeHtml(fullname)}" required
+                            placeholder="Nhập họ và tên..."
+                            oninput="updateStudentSummary()"
+                            class="w-full px-3.5 py-2.5 bg-slate-50/60 border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 font-semibold text-sm">
+                    </div>
+                </td>
+                <td class="py-3 px-4">
+                    <input type="date" name="student_dob" value="${escapeHtml(dob)}" required
+                        class="w-full px-3.5 py-2.5 bg-slate-50/60 border border-slate-300 rounded-xl text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                </td>
+                <td class="py-3 px-4">
+                    <input type="text" name="student_note" value="${escapeHtml(note)}"
+                        placeholder="Số ĐT hoặc ghi chú..."
+                        class="w-full px-3.5 py-2.5 bg-slate-50/60 border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                </td>
+                <td class="py-3 px-3 text-center">
+                    <button type="button" onclick="removeStudentRow('${rowId}')" title="Xóa học viên này"
+                        class="w-8 h-8 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition inline-flex items-center justify-center">
+                        <i class="fa-regular fa-trash-can"></i>
+                    </button>
+                </td>
+            `;
+
+            container.appendChild(tr);
+            updateRowNumbers();
+            updateStudentSummary();
+        }
+
+        function removeStudentRow(rowId) {
+            const rows = document.querySelectorAll('.student-item-row');
+            if (rows.length <= 1) {
+                showToast("Danh sách cần có ít nhất 1 học viên!", "warning");
+                return;
+            }
+            const targetRow = document.getElementById(rowId);
+            if (targetRow) {
+                targetRow.remove();
+                updateRowNumbers();
+                updateStudentSummary();
+            }
+        }
+
+        function clearAllStudentRows() {
+            if (confirm("Bạn có chắc chắn muốn xóa tất cả học viên trong danh sách hiện tại?")) {
+                const container = document.getElementById('studentListContainer');
+                container.innerHTML = '';
+                addNewStudentRow();
+                showToast("Đã đặt lại danh sách học viên", "info");
+            }
+        }
+
+        function updateRowNumbers() {
+            const rows = document.querySelectorAll('.student-item-row');
+            rows.forEach((row, index) => {
+                const sttCell = row.querySelector('.student-stt');
+                if (sttCell) {
+                    sttCell.textContent = index + 1;
+                }
+            });
+        }
+
+        function updateStudentSummary() {
+            const rows = document.querySelectorAll('.student-item-row');
+            const count = rows.length;
+            
+            const badgeRegisterCount = document.getElementById('badgeRegisterCount');
+            const studentTotalBadge = document.getElementById('studentTotalBadge');
+            const summaryStudentCount = document.getElementById('summaryStudentCount');
+            const submitBtnText = document.getElementById('submitBtnText');
+
+            if (badgeRegisterCount) badgeRegisterCount.textContent = count;
+            if (studentTotalBadge) studentTotalBadge.textContent = `${count} học viên`;
+            if (summaryStudentCount) summaryStudentCount.textContent = count;
+            if (submitBtnText) submitBtnText.textContent = `Gửi Đăng Ký (${count} Học Viên)`;
+        }
+
+        // ==========================================
+        // DÁN NHANH DANH SÁCH (MODAL BULK INPUT)
+        // ==========================================
+        function openBulkInputModal() {
+            document.getElementById('bulkInputModal').classList.remove('hidden');
+            const textarea = document.getElementById('bulkInputTextarea');
+            textarea.value = '';
+            textarea.focus();
+        }
+
+        function closeBulkInputModal() {
+            document.getElementById('bulkInputModal').classList.add('hidden');
+        }
+
+        function applyBulkInput() {
+            const rawText = document.getElementById('bulkInputTextarea').value.trim();
+            if (!rawText) {
+                showToast("Vui lòng dán danh sách vào ô văn bản!", "warning");
+                return;
+            }
+
+            const lines = rawText.split('\n');
+            const parsedList = [];
+
+            lines.forEach(line => {
+                const cleanLine = line.trim();
+                if (!cleanLine) return;
+
+                // Tách theo dấu phẩy, dấu gạch đứng (|), hoặc dấu tab (\t)
+                let parts = [];
+                if (cleanLine.includes('\t')) {
+                    parts = cleanLine.split('\t');
+                } else if (cleanLine.includes(',')) {
+                    parts = cleanLine.split(',');
+                } else if (cleanLine.includes('|')) {
+                    parts = cleanLine.split('|');
+                } else {
+                    parts = [cleanLine];
+                }
+
+                const fullname = (parts[0] || '').trim();
+                let dob = (parts[1] || '').trim();
+                let note = (parts[2] || '').trim();
+
+                // Chuẩn hóa định dạng ngày sinh nếu dạng dd/mm/yyyy -> yyyy-mm-dd
+                if (dob && dob.includes('/')) {
+                    const dobParts = dob.split('/');
+                    if (dobParts.length === 3) {
+                        const day = dobParts[0].padStart(2, '0');
+                        const month = dobParts[1].padStart(2, '0');
+                        const year = dobParts[2];
+                        dob = `${year}-${month}-${day}`;
+                    }
+                }
+
+                if (fullname) {
+                    parsedList.push({ fullname, dob, note });
+                }
+            });
+
+            if (parsedList.length === 0) {
+                showToast("Không tìm thấy tên học viên hợp lệ trong văn bản dán!", "warning");
+                return;
+            }
+
+            // Kiểm tra xem dòng đầu tiên có đang trống không, nếu có thì ghi đè
+            const existingRows = document.querySelectorAll('.student-item-row');
+            let isFirstRowEmpty = false;
+            if (existingRows.length === 1) {
+                const firstInput = existingRows[0].querySelector('input[name="student_fullname"]');
+                if (firstInput && !firstInput.value.trim()) {
+                    isFirstRowEmpty = true;
+                    existingRows[0].remove();
+                }
+            }
+
+            // Thêm các học viên vào bảng
+            parsedList.forEach(item => {
+                addNewStudentRow(item.fullname, item.dob, item.note);
+            });
+
+            closeBulkInputModal();
+            showToast(`Đã thêm thành công ${parsedList.length} học viên vào danh sách!`, "success");
+        }
+
+        // ==========================================
+        // GỬI DỮ LIỆU ĐĂNG KÝ (XỬ LÝ SUBMIT NHIỀU TÊN)
+        // ==========================================
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+
+            const course = document.getElementById('course').value.trim();
+            const teacher = document.getElementById('teacher').value.trim();
+            const regDate = document.getElementById('regDate').value;
+            const commonNote = document.getElementById('commonNote').value.trim();
+
+            const studentRows = document.querySelectorAll('.student-item-row');
+            const students = [];
+
+            let isValid = true;
+            studentRows.forEach(row => {
+                const nameInput = row.querySelector('input[name="student_fullname"]');
+                const dobInput = row.querySelector('input[name="student_dob"]');
+                const noteInput = row.querySelector('input[name="student_note"]');
+
+                const fullname = nameInput ? nameInput.value.trim() : '';
+                const dob = dobInput ? dobInput.value : '';
+                const studentNote = noteInput ? noteInput.value.trim() : '';
+
+                if (!fullname) {
+                    isValid = false;
+                    nameInput.focus();
+                    return;
+                }
+
+                students.push({
+                    fullname,
+                    dob,
+                    note: studentNote
+                });
+            });
+
+            if (!isValid || students.length === 0) {
+                showToast("Vui lòng điền đầy đủ họ tên cho tất cả học viên!", "error");
+                return;
+            }
+
+            // Bắt đầu quá trình gửi
+            const submitBtn = document.getElementById('submitBtn');
+            const submitBtnText = document.getElementById('submitBtnText');
+            const progressWrapper = document.getElementById('progressWrapper');
+            const progressBar = document.getElementById('progressBar');
+            const progressStatusText = document.getElementById('progressStatusText');
+            const progressPercent = document.getElementById('progressPercent');
+            const statusMessage = document.getElementById('statusMessage');
+
+            submitBtn.disabled = true;
+            submitBtnText.textContent = "Đang gửi dữ liệu...";
+            progressWrapper.classList.remove('hidden');
+            statusMessage.classList.add('hidden');
+            progressBar.style.width = "5%";
+            progressPercent.textContent = "5%";
+
+            const webAppUrl = getWebAppUrl();
+            let successCount = 0;
+            let hasGoogleSheetError = false;
+            let errorMessageDetail = "";
+            const totalCount = students.length;
+
+            // Gửi từng học viên vào Google Sheet
+            for (let i = 0; i < totalCount; i++) {
+                const s = students[i];
+                const fullNote = [commonNote, s.note, regDate ? `Ngày thi: ${regDate}` : ''].filter(Boolean).join(' | ');
+
+                const payload = {
+                    fullname: s.fullname,
+                    dob: s.dob,
+                    course: course,
+                    teacher: teacher,
+                    note: fullNote
+                };
+
+                progressStatusText.textContent = `Đang gửi học viên ${i + 1}/${totalCount}: ${s.fullname}...`;
+                
+                try {
+                    const res = await fetch(webAppUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (res.status === 403) {
+                        hasGoogleSheetError = true;
+                        errorMessageDetail = "Lỗi 403 Forbidden: Google Apps Script đang từ chối truy cập (chưa cấp quyền Anyone).";
+                    } else if (!res.ok && res.status !== 0) {
+                        hasGoogleSheetError = true;
+                        errorMessageDetail = `Máy chủ phản hồi mã lỗi HTTP ${res.status}`;
+                    } else {
+                        successCount++;
+                    }
+                } catch (err) {
+                    // Trình duyệt gặp lỗi mạng hoặc CORS bị redirect chặn (thường do Google chặn 403)
+                    console.warn("Lỗi gửi tới Google Apps Script:", err);
+                    hasGoogleSheetError = true;
+                    errorMessageDetail = "Bị chặn kết nối CORS/403: Google Script chưa cấp quyền truy cập công khai (Anyone).";
+                }
+
+                const percent = Math.round(((i + 1) / totalCount) * 100);
+                progressBar.style.width = `${percent}%`;
+                progressPercent.textContent = `${percent}%`;
+            }
+
+            // Lưu vào Lịch sử đăng ký (localStorage) luôn an toàn
+            const registrationRecord = {
+                id: 'BATCH_' + Date.now(),
+                timestamp: new Date().toISOString(),
+                formattedTime: formatDateTime(new Date()),
+                course: course,
+                teacher: teacher,
+                regDate: regDate,
+                commonNote: commonNote,
+                students: students,
+                totalStudents: students.length,
+                status: hasGoogleSheetError ? 'local_only' : 'success'
+            };
+
+            saveToHistory(registrationRecord);
+
+            // Xử lý thông báo kết quả trung thực
+            if (hasGoogleSheetError) {
+                progressStatusText.textContent = `Đã lưu vào bộ nhớ máy, nhưng Google Sheet từ chối nhận dữ liệu!`;
+                statusMessage.className = "mt-4 p-4 rounded-2xl text-xs sm:text-sm bg-rose-50 text-rose-900 border border-rose-200 block";
+                statusMessage.innerHTML = `
+                    <div class="flex items-start gap-3 text-left">
+                        <i class="fa-solid fa-triangle-exclamation text-rose-500 text-lg mt-0.5"></i>
+                        <div class="space-y-1.5 flex-1">
+                            <p class="font-bold text-rose-800 text-sm">
+                                Chưa vào được Google Sheet do lỗi quyền truy cập (403)!
+                            </p>
+                            <p class="text-rose-700 leading-relaxed text-xs">
+                                Toàn bộ dữ liệu <strong>${totalCount} học viên</strong> đã được lưu an toàn trong mục <strong>"Lịch Sử Đăng Ký"</strong> trên máy bạn để không bị mất dữ liệu.
+                                <br>Google Sheet chưa nhận được vì Web App URL đang chặn quyền truy cập (chưa chọn <em>"Anyone"</em>).
+                            </p>
+                            <div class="pt-1 flex flex-wrap gap-2">
+                                <button type="button" onclick="openAppsScriptGuideModal()"
+                                    class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition shadow-sm">
+                                    <i class="fa-solid fa-wrench mr-1"></i> Xem cách mở quyền Google Sheet (1 phút)
+                                </button>
+                                <button type="button" onclick="openConfigModal()"
+                                    class="px-3 py-1.5 bg-white border border-rose-300 hover:bg-rose-100 text-rose-900 rounded-xl text-xs font-bold transition">
+                                    <i class="fa-solid fa-sliders mr-1"></i> Kiểm tra &amp; Đổi URL
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                showToast("Dữ liệu đã lưu trên máy nhưng Google Sheet bị lỗi quyền 403!", "error");
+            } else {
+                progressStatusText.textContent = `Hoàn thành! Đã đăng ký thành công ${totalCount} học viên vào Google Sheet.`;
+                statusMessage.className = "mt-4 p-4 rounded-2xl text-sm font-bold text-center bg-emerald-50 text-emerald-700 border border-emerald-200 block";
+                statusMessage.innerHTML = `
+                    <i class="fa-solid fa-circle-check text-base mr-1.5"></i>
+                    Đã gửi thành công danh sách <strong>${totalCount} học viên</strong> vào Google Sheet!
+                `;
+                showToast(`Đăng ký thành công ${totalCount} học viên vào Google Sheet!`, "success");
+            }
+
+            setTimeout(() => {
+                submitBtn.disabled = false;
+                submitBtnText.textContent = `Gửi Đăng Ký (${totalCount} Học Viên)`;
+                // Đặt lại form học viên về 1 dòng nếu thành công
+                if (!hasGoogleSheetError) {
+                    initStudentRows();
+                    document.getElementById('commonNote').value = '';
+                }
+                progressWrapper.classList.add('hidden');
+                updateBadges();
+            }, 2500);
+        }
+
+        function resetFullForm() {
+            if (confirm("Bạn có muốn làm mới toàn bộ thông tin đăng ký không?")) {
+                document.getElementById('datForm').reset();
+                const todayStr = new Date().toISOString().split('T')[0];
+                const regDateInput = document.getElementById('regDate');
+                if (regDateInput) regDateInput.value = todayStr;
+                initStudentRows();
+                document.getElementById('statusMessage').classList.add('hidden');
+                document.getElementById('progressWrapper').classList.add('hidden');
+                showToast("Đã làm mới form đăng ký", "info");
+            }
+        }
+
+        // ==========================================
+        // QUẢN LÝ LỊCH SỬ ĐĂNG KÝ (LOCALSTORAGE)
+        // ==========================================
+        function getHistory() {
+            try {
+                const data = localStorage.getItem(STORAGE_KEY_HISTORY);
+                return data ? JSON.parse(data) : [];
+            } catch (e) {
+                console.error("Lỗi đọc lịch sử:", e);
+                return [];
+            }
+        }
+
+        function saveToHistory(record) {
+            const list = getHistory();
+            list.unshift(record); // Thêm lên đầu danh sách
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(list));
+            updateBadges();
+        }
+
+        function updateBadges() {
+            const list = getHistory();
+            const badgeHistoryCount = document.getElementById('badgeHistoryCount');
+            if (badgeHistoryCount) {
+                badgeHistoryCount.textContent = list.length;
+            }
+        }
+
+        function renderHistoryList() {
+            const list = getHistory();
+            const container = document.getElementById('historyListContainer');
+            const emptyState = document.getElementById('historyEmptyState');
+            const searchInput = document.getElementById('historySearchInput');
+            const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+            // Cập nhật KPI cards
+            const kpiBatchCount = document.getElementById('kpiBatchCount');
+            const kpiStudentCount = document.getElementById('kpiStudentCount');
+            const kpiLatestDate = document.getElementById('kpiLatestDate');
+
+            let totalStudentsAll = 0;
+            list.forEach(item => totalStudentsAll += (item.totalStudents || (item.students ? item.students.length : 1)));
+
+            if (kpiBatchCount) kpiBatchCount.textContent = list.length;
+            if (kpiStudentCount) kpiStudentCount.textContent = totalStudentsAll;
+            if (kpiLatestDate) {
+                kpiLatestDate.textContent = list.length > 0 ? list[0].formattedTime : "Chưa có dữ liệu";
+            }
+
+            // Lọc danh sách theo từ khóa tìm kiếm
+            const filteredList = list.filter(item => {
+                if (!query) return true;
+                const matchCourse = (item.course || '').toLowerCase().includes(query);
+                const matchTeacher = (item.teacher || '').toLowerCase().includes(query);
+                const matchStudent = (item.students || []).some(s => s.fullname.toLowerCase().includes(query));
+                return matchCourse || matchTeacher || matchStudent;
+            });
+
+            if (filteredList.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            container.innerHTML = '';
+
+            filteredList.forEach(batch => {
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-3xl border border-slate-200/90 shadow-sm hover:shadow-md transition p-5 sm:p-6 space-y-4";
+
+                const studentNames = (batch.students || []).map(s => s.fullname).join(', ');
+                const studentCount = batch.totalStudents || (batch.students ? batch.students.length : 1);
+
+                card.innerHTML = `
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-11 h-11 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-lg border border-indigo-100">
+                                <i class="fa-solid fa-graduation-cap"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h4 class="text-base font-bold text-slate-900">${escapeHtml(batch.course)}</h4>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                        <i class="fa-solid fa-check text-[10px] mr-1"></i> Thành công
+                                    </span>
+                                </div>
+                                <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500 mt-0.5">
+                                    <span><i class="fa-solid fa-chalkboard-user mr-1 text-slate-400"></i>GV: <strong>${escapeHtml(batch.teacher)}</strong></span>
+                                    <span>•</span>
+                                    <span><i class="fa-regular fa-clock mr-1 text-slate-400"></i>${batch.formattedTime}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Badge số học viên -->
+                        <div class="flex items-center gap-2">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-indigo-600 text-white shadow-sm">
+                                <i class="fa-solid fa-users text-xs"></i>
+                                ${studentCount} Học viên
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Tóm tắt danh sách tên -->
+                    <div class="bg-slate-50 rounded-2xl p-3.5 border border-slate-100 text-xs">
+                        <div class="text-slate-400 font-semibold mb-1 flex items-center gap-1">
+                            <i class="fa-solid fa-user-group text-slate-400"></i>
+                            Danh sách học viên:
+                        </div>
+                        <div class="font-medium text-slate-700 line-clamp-2">
+                            ${escapeHtml(studentNames)}
+                        </div>
+                        ${batch.commonNote ? `<div class="mt-2 text-slate-500 pt-2 border-t border-slate-200/60"><i class="fa-regular fa-note-sticky mr-1"></i>Ghi chú: ${escapeHtml(batch.commonNote)}</div>` : ''}
+                    </div>
+
+                    <!-- Thao tác trên từng bản ghi lịch sử -->
+                    <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="viewHistoryDetail('${batch.id}')"
+                                class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition">
+                                <i class="fa-regular fa-eye"></i>
+                                <span>Xem chi tiết</span>
+                            </button>
+
+                            <button type="button" onclick="reuseHistoryBatch('${batch.id}')"
+                                class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold border border-indigo-200 transition" title="Điền lại thông tin khóa này vào form để đăng ký tiếp">
+                                <i class="fa-solid fa-clone"></i>
+                                <span>Điền lại form</span>
+                            </button>
+                        </div>
+
+                        <div class="flex items-center gap-1.5">
+                            <button type="button" onclick="exportSingleBatchCSV('${batch.id}')" title="Tải file Excel đợt này"
+                                class="p-2 text-emerald-600 hover:bg-emerald-50 rounded-xl transition text-sm">
+                                <i class="fa-solid fa-file-arrow-down"></i>
+                            </button>
+                            <button type="button" onclick="deleteHistoryItem('${batch.id}')" title="Xóa đợt này"
+                                class="p-2 text-rose-500 hover:bg-rose-50 rounded-xl transition text-sm">
+                                <i class="fa-regular fa-trash-can"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        function viewHistoryDetail(batchId) {
+            const list = getHistory();
+            const batch = list.find(b => b.id === batchId);
+            if (!batch) return;
+
+            currentDetailBatch = batch;
+
+            document.getElementById('modalDetailTitle').textContent = `Đợt Đăng Ký: ${batch.course}`;
+            document.getElementById('modalDetailSubtitle').textContent = `Thời gian gửi: ${batch.formattedTime}`;
+            document.getElementById('modalDetailCourse').textContent = batch.course;
+            document.getElementById('modalDetailTeacher').textContent = batch.teacher;
+            document.getElementById('modalDetailCount').textContent = `${batch.students.length} học viên`;
+
+            const tbody = document.getElementById('modalDetailStudentTable');
+            tbody.innerHTML = '';
+
+            batch.students.forEach((s, idx) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50";
+                tr.innerHTML = `
+                    <td class="py-2.5 px-3 text-center text-slate-400 font-bold">${idx + 1}</td>
+                    <td class="py-2.5 px-4 font-bold text-slate-800">${escapeHtml(s.fullname)}</td>
+                    <td class="py-2.5 px-4 text-slate-600">${s.dob || '---'}</td>
+                    <td class="py-2.5 px-4 text-slate-500">${escapeHtml(s.note || '---')}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('historyDetailModal').classList.remove('hidden');
+        }
+
+        function closeHistoryDetailModal() {
+            document.getElementById('historyDetailModal').classList.add('hidden');
+            currentDetailBatch = null;
+        }
+
+        function reuseHistoryBatch(batchId) {
+            const list = getHistory();
+            const batch = list.find(b => b.id === batchId);
+            if (!batch) return;
+
+            if (confirm(`Bạn có muốn điền lại thông tin khóa "${batch.course}" vào Form Đăng Ký không?`)) {
+                // Điền thông tin chung
+                document.getElementById('course').value = batch.course || '';
+                document.getElementById('teacher').value = batch.teacher || '';
+                document.getElementById('commonNote').value = batch.commonNote || '';
+
+                // Điền lại danh sách học viên
+                const container = document.getElementById('studentListContainer');
+                container.innerHTML = '';
+                studentCounter = 0;
+
+                (batch.students || []).forEach(s => {
+                    addNewStudentRow(s.fullname, s.dob, s.note);
+                });
+
+                switchTab('register');
+                showToast("Đã sao chép thông tin vào form đăng ký!", "success");
+            }
+        }
+
+        function deleteHistoryItem(batchId) {
+            if (confirm("Bạn có chắc chắn muốn xóa bản ghi lịch sử này không?")) {
+                let list = getHistory();
+                list = list.filter(b => b.id !== batchId);
+                localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(list));
+                updateBadges();
+                renderHistoryList();
+                showToast("Đã xóa bản ghi lịch sử", "info");
+            }
+        }
+
+        function confirmClearHistory() {
+            const list = getHistory();
+            if (list.length === 0) {
+                showToast("Lịch sử hiện đang trống!", "info");
+                return;
+            }
+            if (confirm("CẢNH BÁO: Thao tác này sẽ xóa toàn bộ lịch sử đăng ký đã lưu trên máy. Bạn có chắc chắn không?")) {
+                localStorage.removeItem(STORAGE_KEY_HISTORY);
+                updateBadges();
+                renderHistoryList();
+                showToast("Đã xóa toàn bộ lịch sử đăng ký!", "info");
+            }
+        }
+
+        // ==========================================
+        // XUẤT CSV / EXCEL & IN ẤN
+        // ==========================================
+        function exportHistoryToCSV() {
+            const list = getHistory();
+            if (list.length === 0) {
+                showToast("Chưa có dữ liệu để xuất file!", "warning");
+                return;
+            }
+
+            let csvContent = "\uFEFF"; // Thêm BOM để Excel mở đúng dấu tiếng Việt UTF-8
+            csvContent += "STT,Mã Đợt,Thời Gian Gửi,Khóa Học,Giáo Viên,Họ Tên Học Viên,Ngày Sinh,Ghi Chú Học Viên,Ghi Chú Đợt\n";
+
+            let rowCount = 1;
+            list.forEach(batch => {
+                (batch.students || []).forEach(s => {
+                    const row = [
+                        rowCount++,
+                        `"${batch.id}"`,
+                        `"${batch.formattedTime}"`,
+                        `"${escapeCsv(batch.course)}"`,
+                        `"${escapeCsv(batch.teacher)}"`,
+                        `"${escapeCsv(s.fullname)}"`,
+                        `"${s.dob || ''}"`,
+                        `"${escapeCsv(s.note || '')}"`,
+                        `"${escapeCsv(batch.commonNote || '')}"`
+                    ];
+                    csvContent += row.join(",") + "\n";
+                });
+            });
+
+            downloadCSVFile(csvContent, `Danh_Sach_Dang_Ky_DAT_${new Date().toISOString().split('T')[0]}.csv`);
+            showToast("Đã xuất file Excel/CSV thành công!", "success");
+        }
+
+        function exportSingleBatchCSV(batchId) {
+            const list = getHistory();
+            const batch = list.find(b => b.id === batchId);
+            if (!batch) return;
+
+            let csvContent = "\uFEFF";
+            csvContent += "STT,Khóa Học,Giáo Viên,Họ Tên Học Viên,Ngày Sinh,Ghi Chú\n";
+
+            (batch.students || []).forEach((s, idx) => {
+                const row = [
+                    idx + 1,
+                    `"${escapeCsv(batch.course)}"`,
+                    `"${escapeCsv(batch.teacher)}"`,
+                    `"${escapeCsv(s.fullname)}"`,
+                    `"${s.dob || ''}"`,
+                    `"${escapeCsv(s.note || '')}"`
+                ];
+                csvContent += row.join(",") + "\n";
+            });
+
+            downloadCSVFile(csvContent, `DAT_${sanitizeFilename(batch.course)}_${batch.id}.csv`);
+            showToast("Đã tải file danh sách!", "success");
+        }
+
+        function downloadCSVFile(content, filename) {
+            const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", filename);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function printCurrentDetail() {
+            if (!currentDetailBatch) return;
+            window.print();
+        }
+
+        // ==========================================
+        // CÀI ĐẶT CẤU HÌNH & HƯỚNG DẪN
+        // ==========================================
+        function openConfigModal() {
+            const modal = document.getElementById('configModal');
+            const input = document.getElementById('configUrlInput');
+            input.value = getWebAppUrl();
+            modal.classList.remove('hidden');
+        }
+
+        function closeConfigModal() {
+            document.getElementById('configModal').classList.add('hidden');
+        }
+
+        function saveConfigUrl() {
+            const input = document.getElementById('configUrlInput');
+            const newUrl = input.value.trim();
+            if (newUrl) {
+                localStorage.setItem(STORAGE_KEY_CONFIG, newUrl);
+                showToast("Đã cập nhật Web App URL thành công!", "success");
+            }
+            closeConfigModal();
+        }
+
+        function openHelpModal() {
+            document.getElementById('helpModal').classList.remove('hidden');
+        }
+
+        function closeHelpModal() {
+            document.getElementById('helpModal').classList.add('hidden');
+        }
+
+        function openAppsScriptGuideModal() {
+            document.getElementById('appsScriptGuideModal').classList.remove('hidden');
+        }
+
+        function closeAppsScriptGuideModal() {
+            document.getElementById('appsScriptGuideModal').classList.add('hidden');
+        }
+
+        function copyAppsScriptCode() {
+            const codeEl = document.getElementById('sampleAppsScriptCode');
+            if (codeEl) {
+                navigator.clipboard.writeText(codeEl.textContent).then(() => {
+                    showToast("Đã sao chép mã Google Apps Script vào bộ nhớ tạm!", "success");
+                }).catch(() => {
+                    showToast("Không thể sao chép tự động, hãy bôi đen và nhấn Ctrl+C!", "warning");
+                });
+            }
+        }
+
+        async function testConnection() {
+            const input = document.getElementById('configUrlInput');
+            const resultBox = document.getElementById('testConnectionResult');
+            const btn = document.getElementById('btnTestConnection');
+            const url = input.value.trim();
+
+            if (!url) {
+                resultBox.className = "p-3 rounded-xl text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200 block";
+                resultBox.textContent = "Vui lòng nhập Web App URL trước khi kiểm tra!";
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-indigo-600"></i> Đang kiểm tra...`;
+            resultBox.className = "p-3 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200 block";
+            resultBox.textContent = "Đang gửi yêu cầu kiểm tra kết nối tới Google Apps Script...";
+
+            try {
+                const res = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'ping_test' })
+                });
+
+                if (res.status === 403) {
+                    resultBox.className = "p-3.5 rounded-2xl text-xs font-semibold bg-rose-50 text-rose-800 border border-rose-200 block space-y-1.5";
+                    resultBox.innerHTML = `
+                        <div class="font-bold text-rose-700 flex items-center gap-1.5 text-sm">
+                            <i class="fa-solid fa-circle-xmark"></i> Lỗi 403: Google Script Đang Chặn Truy Cập!
+                        </div>
+                        <div class="leading-relaxed">
+                            Google Apps Script chưa chọn quyền <strong>"Anyone" (Bất kỳ ai)</strong> khi Deploy, nên dữ liệu không thể ghi vào Google Sheet.
+                        </div>
+                        <div class="pt-1">
+                            <button type="button" onclick="openAppsScriptGuideModal()" class="px-3 py-1 bg-rose-600 text-white rounded-lg font-bold text-xs hover:bg-rose-700">
+                                Xem cách mở quyền "Anyone" (1 phút)
+                            </button>
+                        </div>
+                    `;
+                } else if (res.ok) {
+                    resultBox.className = "p-3 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 block";
+                    resultBox.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> Kết nối thành công! Web App đang hoạt động và sẵn sàng nhận dữ liệu.`;
+                } else {
+                    resultBox.className = "p-3 rounded-xl text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200 block";
+                    resultBox.innerHTML = `Phản hồi mã trạng thái HTTP ${res.status}. Vui lòng kiểm tra quyền Deploy.`;
+                }
+            } catch (err) {
+                console.warn("Test connection error:", err);
+                resultBox.className = "p-3.5 rounded-2xl text-xs font-semibold bg-rose-50 text-rose-800 border border-rose-200 block space-y-1.5";
+                resultBox.innerHTML = `
+                    <div class="font-bold text-rose-700 flex items-center gap-1.5 text-sm">
+                        <i class="fa-solid fa-circle-exclamation"></i> Không thể kết nối (Lỗi CORS / 403 Forbidden)!
+                    </div>
+                    <div class="leading-relaxed">
+                        Trình duyệt bị chặn kết nối tới Google Script. Nguyên nhân 99% là do quyền truy cập trong bản Triển khai chưa được chuyển sang <strong>"Bất kỳ ai (Anyone)"</strong>.
+                    </div>
+                    <div class="pt-1">
+                        <button type="button" onclick="openAppsScriptGuideModal()" class="px-3 py-1 bg-rose-600 text-white rounded-lg font-bold text-xs hover:bg-rose-700">
+                            Xem cách sửa quyền ngay
+                        </button>
+                    </div>
+                `;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-plug-circle-bolt text-indigo-600"></i> Kiểm tra kết nối ngay`;
+            }
+        }
+
+        // ==========================================
+        // TOAST THÔNG BÁO HIỆN ĐẠI
+        // ==========================================
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            toast.className = `toast-animate pointer-events-auto p-4 rounded-2xl shadow-xl flex items-center gap-3 text-sm font-semibold border transition-all duration-300`;
+
+            let icon = 'fa-solid fa-circle-info';
+            let bgClass = 'bg-white border-slate-200 text-slate-800';
+
+            if (type === 'success') {
+                icon = 'fa-solid fa-circle-check text-emerald-500';
+                bgClass = 'bg-emerald-50 border-emerald-200 text-emerald-900';
+            } else if (type === 'error') {
+                icon = 'fa-solid fa-circle-exclamation text-rose-500';
+                bgClass = 'bg-rose-50 border-rose-200 text-rose-900';
+            } else if (type === 'warning') {
+                icon = 'fa-solid fa-triangle-exclamation text-amber-500';
+                bgClass = 'bg-amber-50 border-amber-200 text-amber-900';
+            } else {
+                icon = 'fa-solid fa-circle-info text-indigo-500';
+                bgClass = 'bg-indigo-50 border-indigo-200 text-indigo-900';
+            }
+
+            toast.classList.add(...bgClass.split(' '));
+            toast.innerHTML = `
+                <i class="${icon} text-lg"></i>
+                <span class="flex-1">${escapeHtml(message)}</span>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-10px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3800);
+        }
+
+        // ==========================================
+        // CÁC HÀM TIỆN ÍCH HELPER
+        // ==========================================
+        function formatDateTime(date) {
+            const d = new Date(date);
+            const hours = String(d.getHours()).padStart(2, '0');
+            const minutes = String(d.getMinutes()).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const year = d.getFullYear();
+            return `${hours}:${minutes} - ${day}/${month}/${year}`;
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function escapeCsv(str) {
+            if (!str) return '';
+            return String(str).replace(/"/g, '""');
+        }
+
+        function sanitizeFilename(name) {
+            return (name || 'data').replace(/[^a-zA-Z0-9_\u00C0-\u024F\u1EA0-\u1EF9]/g, '_');
+        }
+    </script>
+</body>
+
+</html>
