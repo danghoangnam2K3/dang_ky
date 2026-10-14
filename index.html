@@ -365,12 +365,7 @@
                                 <input type="text" id="course" required placeholder="Ví dụ: Khóa B2 - K35"
                                     list="courseSuggestions"
                                     class="w-full px-4 py-2.5 bg-slate-50/70 border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition font-medium text-sm">
-                                <datalist id="courseSuggestions">
-                                    <option value="Khóa B11 - Tự Động K40">
-                                    <option value="Khóa B2 - Số Sàn K35">
-                                    <option value="Khóa C - Tải K22">
-                                    <option value="Nâng hạng D - K15">
-                                </datalist>
+
                             </div>
 
                             <!-- Giáo viên phụ trách -->
@@ -1391,7 +1386,7 @@ function doGet(e) {
                 statusMessage.className = "mt-4 p-4 rounded-2xl text-sm font-bold text-center bg-emerald-50 text-emerald-700 border border-emerald-200 block";
                 statusMessage.innerHTML = `
                     <i class="fa-solid fa-circle-check text-base mr-1.5"></i>
-                    Bạn đã đăng lý thành công danh sách <strong>${totalCount} học viên</strong>!
+                    Bạn đã đăng ký thành công danh sách <strong>${totalCount} học viên</strong>!
                 `;
                 showToast(`Đăng ký thành công ${totalCount} học viên!`, "success");
             }
