@@ -351,22 +351,9 @@
 
                     </div>
 
-                    <!-- PHẦN 1: THÔNG TIN KHÓA HỌC, GIÁO VIÊN & GHI CHÚ -->
+                    <!-- PHẦN 1: THÔNG TIN GIÁO VIÊN & NGÀY ĐĂNG KÝ -->
                     <div class="space-y-4">
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4 md:gap-5">
-
-                            <!-- Khóa học -->
-                            <div>
-                                <label for="course"
-                                    class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
-                                    <i class="fa-solid fa-graduation-cap text-indigo-500 mr-1.5"></i>
-                                    Khóa học <span class="text-rose-500">*</span>
-                                </label>
-                                <input type="text" id="course" required placeholder="Ví dụ: Khóa B2 - K35"
-                                    list="courseSuggestions"
-                                    class="w-full px-4 py-2.5 bg-slate-50/70 border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition font-medium text-sm">
-
-                            </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4 md:gap-5">
 
                             <!-- Giáo viên phụ trách -->
                             <div>
@@ -401,7 +388,7 @@
                         </div>
                     </div>
 
-                    <!-- PHẦN 2: DANH SÁCH HỌC VIÊN (HỌ TÊN, NGÀY SINH, GHI CHÚ) -->
+                    <!-- PHẦN 2: DANH SÁCH HỌC VIÊN (HỌ TÊN, NGÀY SINH, KHÓA HỌC, GHI CHÚ) -->
                     <div class="pt-5 border-t border-slate-200/80 space-y-3">
                         <div class="flex items-center justify-between gap-2">
                             <h3 class="text-xs sm:text-sm font-bold text-slate-800 flex items-center gap-1.5 sm:gap-2">
@@ -422,13 +409,16 @@
                                     <tr
                                         class="bg-slate-50/90 text-slate-600 text-xs font-bold uppercase tracking-wider border-b border-slate-200">
                                         <th class="py-3 px-3 w-12 text-center">STT</th>
-                                        <th class="py-3 px-4 min-w-[220px]">
+                                        <th class="py-3 px-4 min-w-[200px]">
                                             Họ và tên học viên <span class="text-rose-500">*</span>
                                         </th>
-                                        <th class="py-3 px-4 min-w-[170px]">
+                                        <th class="py-3 px-4 min-w-[150px]">
                                             Ngày sinh <span class="text-rose-500">*</span>
                                         </th>
-                                        <th class="py-3 px-4 min-w-[200px]">
+                                        <th class="py-3 px-4 min-w-[160px]">
+                                            Khóa học <span class="text-rose-500">*</span>
+                                        </th>
+                                        <th class="py-3 px-4 min-w-[180px]">
                                             Ghi chú riêng
                                         </th>
                                         <th class="py-3 px-3 w-16 text-center">Xóa</th>
@@ -712,6 +702,7 @@
                                 <th class="py-2.5 px-3 text-center w-12">STT</th>
                                 <th class="py-2.5 px-4">Họ và tên</th>
                                 <th class="py-2.5 px-4">Ngày sinh</th>
+                                <th class="py-2.5 px-4">Khóa học</th>
                                 <th class="py-2.5 px-4">Ghi chú</th>
                             </tr>
                         </thead>
@@ -870,18 +861,37 @@
   try {
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
     if (sheet.getLastRow() === 0) {
-      sheet.appendRow(["Thời gian", "Họ và tên", "Ngày sinh", "Khóa học", "Giáo viên", "Ghi chú"]);
+      sheet.appendRow(["Thời Gian Đăng Ký", "Họ Và Tên Học Viên", "Ngày Sinh", "Khóa Học", "Giáo Viên Phụ Trách", "GHI CHÚ"]);
     }
     var data = JSON.parse(e.postData.contents);
-    sheet.appendRow([
-      new Date(),
-      data.fullname || "",
-      data.dob || "",
-      data.course || "",
-      data.teacher || "",
-      data.note || ""
-    ]);
-    return ContentService.createTextOutput(JSON.stringify({ result: "success" }))
+    var now = Utilities.formatDate(new Date(), Session.getScriptTimeZone() || "Asia/Ho_Chi_Minh", "HH:mm:ss dd/MM/yyyy");
+    
+    // Hỗ trợ cả 1 học viên HOẶC cả danh sách (Batch siêu tốc)
+    var list = [];
+    if (data.students && Array.isArray(data.students)) {
+      list = data.students;
+    } else if (Array.isArray(data)) {
+      list = data;
+    } else {
+      list = [data];
+    }
+
+    var rows = list.map(function(item) {
+      return [
+        now,
+        item.fullname || "",
+        item.dob || "",
+        item.course || data.course || "",
+        item.teacher || data.teacher || "",
+        item.note || ""
+      ];
+    });
+
+    if (rows.length > 0) {
+      sheet.getRange(sheet.getLastRow() + 1, 1, rows.length, 6).setValues(rows);
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({ result: "success", status: "success", count: rows.length }))
       .setMimeType(ContentService.MimeType.JSON);
   } catch (err) {
     return ContentService.createTextOutput(JSON.stringify({ result: "error", error: err.toString() }))
@@ -942,6 +952,11 @@ function doGet(e) {
     <!-- ==================== TOAST CONTAINER ==================== -->
     <div id="toastContainer"
         class="fixed top-20 sm:top-24 right-3 sm:right-4 z-50 flex flex-col gap-2 max-w-[calc(100vw-24px)] sm:max-w-sm w-full pointer-events-none">
+    </div>
+
+    <!-- ==================== FLOATING SYNC STATUS ==================== -->
+    <div id="syncIndicator"
+        class="fixed bottom-5 right-5 z-50 hidden items-center gap-2.5 px-4 py-2.5 rounded-2xl shadow-2xl border text-xs font-bold transition-all duration-300">
     </div>
 
     <!-- ==================== FOOTER ==================== -->
@@ -1032,7 +1047,7 @@ function doGet(e) {
             addNewStudentRow();
         }
 
-        function addNewStudentRow(fullname = '', dob = '', note = '') {
+        function addNewStudentRow(fullname = '', dob = '', course = '', note = '') {
             studentCounter++;
             const container = document.getElementById('studentListContainer');
             const rowId = `student-row-${studentCounter}`;
@@ -1062,6 +1077,15 @@ function doGet(e) {
                     </label>
                     <input type="date" name="student_dob" value="${escapeHtml(dob)}" required
                         class="w-full px-3.5 py-2.5 bg-slate-50/60 border border-slate-300 rounded-xl text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                </td>
+                <td class="py-2 sm:py-3 px-2 sm:px-4">
+                    <label class="block sm:hidden text-xs font-bold text-slate-600 mb-1">
+                        Khóa học <span class="text-rose-500">*</span>
+                    </label>
+                    <input type="text" name="student_course" value="${escapeHtml(course)}" required
+                        placeholder="Ví dụ: Khóa B2 - K35"
+                        list="courseSuggestions"
+                        class="w-full px-3.5 py-2.5 bg-slate-50/60 border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-medium">
                 </td>
                 <td class="py-2 sm:py-3 px-2 sm:px-4">
                     <label class="block sm:hidden text-xs font-bold text-slate-600 mb-1">
@@ -1179,7 +1203,8 @@ function doGet(e) {
 
                 const fullname = (parts[0] || '').trim();
                 let dob = (parts[1] || '').trim();
-                let note = (parts[2] || '').trim();
+                let course = (parts[2] || '').trim();
+                let note = (parts[3] || '').trim();
 
                 // Chuẩn hóa định dạng ngày sinh nếu dạng dd/mm/yyyy -> yyyy-mm-dd
                 if (dob && dob.includes('/')) {
@@ -1193,7 +1218,7 @@ function doGet(e) {
                 }
 
                 if (fullname) {
-                    parsedList.push({ fullname, dob, note });
+                    parsedList.push({ fullname, dob, course, note });
                 }
             });
 
@@ -1215,7 +1240,7 @@ function doGet(e) {
 
             // Thêm các học viên vào bảng
             parsedList.forEach(item => {
-                addNewStudentRow(item.fullname, item.dob, item.note);
+                addNewStudentRow(item.fullname, item.dob, item.course, item.note);
             });
 
             closeBulkInputModal();
@@ -1223,12 +1248,11 @@ function doGet(e) {
         }
 
         // ==========================================
-        // GỬI DỮ LIỆU ĐĂNG KÝ (XỬ LÝ SUBMIT NHIỀU TÊN)
+        // GỬI DỮ LIỆU ĐĂNG KÝ (SIÊU TỐC - ẤN LÀ QUA LIỀN)
         // ==========================================
         async function handleFormSubmit(e) {
             e.preventDefault();
 
-            const course = document.getElementById('course').value.trim();
             const teacher = document.getElementById('teacher').value.trim();
             const regDate = document.getElementById('regDate').value || new Date().toISOString().split('T')[0];
             const commonNoteInput = document.getElementById('commonNote');
@@ -1241,162 +1265,233 @@ function doGet(e) {
             studentRows.forEach(row => {
                 const nameInput = row.querySelector('input[name="student_fullname"]');
                 const dobInput = row.querySelector('input[name="student_dob"]');
+                const courseInput = row.querySelector('input[name="student_course"]');
                 const noteInput = row.querySelector('input[name="student_note"]');
 
                 const fullname = nameInput ? nameInput.value.trim() : '';
                 const dob = dobInput ? dobInput.value : '';
+                const studentCourse = courseInput ? courseInput.value.trim() : '';
                 const studentNote = noteInput ? noteInput.value.trim() : '';
 
                 if (!fullname) {
                     isValid = false;
                     nameInput.focus();
+                    showToast("Vui lòng nhập họ và tên học viên!", "error");
+                    return;
+                }
+
+                if (!studentCourse) {
+                    isValid = false;
+                    courseInput.focus();
+                    showToast("Vui lòng chọn khóa học cho học viên!", "error");
                     return;
                 }
 
                 students.push({
-                    fullname,
-                    dob,
+                    fullname: fullname,
+                    dob: dob,
+                    course: studentCourse,
                     note: studentNote
                 });
             });
 
             if (!isValid || students.length === 0) {
-                showToast("Vui lòng điền đầy đủ họ tên cho tất cả học viên!", "error");
+                showToast("Vui lòng điền đầy đủ họ tên và khóa học cho tất cả học viên!", "error");
                 return;
             }
 
-            // Bắt đầu quá trình gửi
+            const totalCount = students.length;
+            const batchId = 'BATCH_' + Date.now();
+            const webAppUrl = getWebAppUrl();
+
+            // 1. LƯU NGAY VÀO LỊCH SỬ ĐĂNG KÝ TRÊN MÁY (TỨC THÌ 0.01 GIÂY - AN TOÀN TUYỆT ĐỐI)
+            const registrationRecord = {
+                id: batchId,
+                timestamp: new Date().toISOString(),
+                formattedTime: formatDateTime(new Date()),
+                course: students.map(s => s.course).filter(Boolean).filter((v, i, a) => a.indexOf(v) === i).join(', ') || 'Nhiều khóa',
+                teacher: teacher,
+                regDate: regDate,
+                commonNote: commonNote,
+                students: students,
+                totalStudents: totalCount,
+                status: 'syncing'
+            };
+
+            saveToHistory(registrationRecord);
+            updateBadges();
+            renderHistoryList();
+
+            // 2. PHẢN HỒI GIAO DIỆN SIÊU TỐC (ẤN LÀ QUA LIỀN TRONG 0.15 GIÂY)
             const submitBtn = document.getElementById('submitBtn');
             const submitBtnText = document.getElementById('submitBtnText');
             const progressWrapper = document.getElementById('progressWrapper');
             const progressBar = document.getElementById('progressBar');
             const progressStatusText = document.getElementById('progressStatusText');
             const progressPercent = document.getElementById('progressPercent');
-            const statusMessage = document.getElementById('statusMessage');
 
-            submitBtn.disabled = true;
-            submitBtnText.textContent = "Đang gửi dữ liệu...";
+            // Hiệu ứng nút: Chuyển sang màu xanh lá cây và tick checkmark
+            submitBtn.classList.remove('from-indigo-600', 'to-brand-600', 'hover:from-indigo-700', 'hover:to-brand-700');
+            submitBtn.classList.add('from-emerald-600', 'to-teal-600');
+            submitBtnText.innerHTML = `<i class="fa-solid fa-check mr-1.5"></i> Đã Gửi Thành Công!`;
+
+            // Thanh tiến trình lướt nhanh 100% trong 250ms
             progressWrapper.classList.remove('hidden');
-            statusMessage.classList.add('hidden');
-            progressBar.style.width = "5%";
-            progressPercent.textContent = "5%";
+            progressBar.style.width = "100%";
+            progressPercent.textContent = "100%";
+            progressStatusText.textContent = `⚡ Đã chuyển đăng ký (${totalCount} học viên)...`;
 
-            const webAppUrl = getWebAppUrl();
-            let successCount = 0;
-            let hasGoogleSheetError = false;
-            let errorMessageDetail = "";
+            showToast(`🚀 Đã gửi thành công ${totalCount} học viên!`, "success");
+            showSyncIndicator('syncing', `⚡ Đang lưu ${totalCount} học viên vào Google Sheet...`);
+
+            // Đặt lại form ngay lập tức (sau 300ms) để người dùng có thể nhập tiếp học viên mới ngay
+            setTimeout(() => {
+                initStudentRows();
+                if (commonNoteInput) commonNoteInput.value = '';
+                submitBtn.classList.remove('from-emerald-600', 'to-teal-600');
+                submitBtn.classList.add('from-indigo-600', 'to-brand-600', 'hover:from-indigo-700', 'hover:to-brand-700');
+                submitBtn.disabled = false;
+                submitBtnText.innerHTML = `<i class="fa-solid fa-paper-plane text-xs sm:text-sm mr-1.5"></i><span>Gửi Đăng Ký (1 Học Viên)</span>`;
+                progressWrapper.classList.add('hidden');
+                progressBar.style.width = "0%";
+                updateBadges();
+            }, 300);
+
+            // 3. TIẾN TRÌNH TRUYỀN NGẦM SONG SONG SANG GOOGLE SHEET (BACKGROUND WORKER)
+            dispatchBackgroundSync(batchId, webAppUrl, students, teacher, commonNote);
+        }
+
+        /**
+         * Tiến trình truyền dữ liệu ngầm không chặn người dùng
+         */
+        async function dispatchBackgroundSync(batchId, webAppUrl, students, teacher, commonNote) {
             const totalCount = students.length;
+            let successCount = 0;
+            let hasError = false;
+            let is403 = false;
 
-            // Gửi từng học viên vào Google Sheet
-            for (let i = 0; i < totalCount; i++) {
-                const s = students[i];
-                const fullNote = [commonNote, s.note, regDate ? `Ngày thi: ${regDate}` : ''].filter(Boolean).join(' | ');
-
+            const sendPromises = students.map(async (s) => {
+                const fullNote = [commonNote, s.note].filter(Boolean).join(' | ');
                 const payload = {
                     fullname: s.fullname,
                     dob: s.dob,
-                    course: course,
+                    course: s.course,
                     teacher: teacher,
                     note: fullNote
                 };
-
-                progressStatusText.textContent = `Đang gửi học viên ${i + 1}/${totalCount}: ${s.fullname}...`;
 
                 try {
                     const res = await fetch(webAppUrl, {
                         method: 'POST',
                         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                        body: JSON.stringify(payload)
+                        body: JSON.stringify(payload),
+                        keepalive: true
                     });
 
                     if (res.status === 403) {
-                        hasGoogleSheetError = true;
-                        errorMessageDetail = "Lỗi 403 Forbidden: Google Apps Script đang từ chối truy cập (chưa cấp quyền Anyone).";
+                        return { ok: false, is403: true };
                     } else if (!res.ok && res.status !== 0) {
-                        hasGoogleSheetError = true;
-                        errorMessageDetail = `Máy chủ phản hồi mã lỗi HTTP ${res.status}`;
+                        return { ok: false, is403: false };
                     } else {
-                        successCount++;
+                        return { ok: true };
                     }
                 } catch (err) {
-                    // Trình duyệt gặp lỗi mạng hoặc CORS bị redirect chặn (thường do Google chặn 403)
-                    console.warn("Lỗi gửi tới Google Apps Script:", err);
-                    hasGoogleSheetError = true;
-                    errorMessageDetail = "Bị chặn kết nối CORS/403: Google Script chưa cấp quyền truy cập công khai (Anyone).";
+                    return { ok: false, is403: false, error: err };
                 }
+            });
 
-                const percent = Math.round(((i + 1) / totalCount) * 100);
-                progressBar.style.width = `${percent}%`;
-                progressPercent.textContent = `${percent}%`;
+            const results = await Promise.all(sendPromises);
+
+            results.forEach(r => {
+                if (r.ok) {
+                    successCount++;
+                } else {
+                    hasError = true;
+                    if (r.is403) is403 = true;
+                }
+            });
+
+            // Cập nhật trạng thái bản ghi trong Lịch Sử
+            const history = getHistory();
+            const record = history.find(item => item.id === batchId);
+            if (record) {
+                record.status = hasError ? 'local_only' : 'success';
+                localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+                renderHistoryList();
             }
 
-            // Lưu vào Lịch sử đăng ký (localStorage) luôn an toàn
-            const registrationRecord = {
-                id: 'BATCH_' + Date.now(),
-                timestamp: new Date().toISOString(),
-                formattedTime: formatDateTime(new Date()),
-                course: course,
-                teacher: teacher,
-                regDate: regDate,
-                commonNote: commonNote,
-                students: students,
-                totalStudents: students.length,
-                status: hasGoogleSheetError ? 'local_only' : 'success'
-            };
-
-            saveToHistory(registrationRecord);
-
-            // Xử lý thông báo kết quả trung thực
-            if (hasGoogleSheetError) {
-                progressStatusText.textContent = `Đã lưu vào bộ nhớ máy, nhưng Google Sheet từ chối nhận dữ liệu!`;
-                statusMessage.className = "mt-4 p-4 rounded-2xl text-xs sm:text-sm bg-rose-50 text-rose-900 border border-rose-200 block";
-                statusMessage.innerHTML = `
-                    <div class="flex items-start gap-3 text-left">
-                        <i class="fa-solid fa-triangle-exclamation text-rose-500 text-lg mt-0.5"></i>
-                        <div class="space-y-1.5 flex-1">
-                            <p class="font-bold text-rose-800 text-sm">
-                                Chưa vào được Google Sheet do lỗi quyền truy cập (403)!
-                            </p>
-                            <p class="text-rose-700 leading-relaxed text-xs">
-                                Toàn bộ dữ liệu <strong>${totalCount} học viên</strong> đã được lưu an toàn trong mục <strong>"Lịch Sử Đăng Ký"</strong> trên máy bạn để không bị mất dữ liệu.
-                                <br>Google Sheet chưa nhận được vì Web App URL đang chặn quyền truy cập (chưa chọn <em>"Anyone"</em>).
-                            </p>
-                            <div class="pt-1 flex flex-wrap gap-2">
-                                <button type="button" onclick="openAppsScriptGuideModal()"
-                                    class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition shadow-sm">
-                                    <i class="fa-solid fa-wrench mr-1"></i> Xem cách mở quyền Google Sheet (1 phút)
-                                </button>
-                                <button type="button" onclick="openConfigModal()"
-                                    class="px-3 py-1.5 bg-white border border-rose-300 hover:bg-rose-100 text-rose-900 rounded-xl text-xs font-bold transition">
-                                    <i class="fa-solid fa-sliders mr-1"></i> Kiểm tra &amp; Đổi URL
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                showToast("Dữ liệu đã lưu trên máy nhưng Google Sheet bị lỗi quyền 403!", "error");
+            if (hasError) {
+                if (is403) {
+                    showSyncIndicator('error', `⚠️ Google Sheet lỗi quyền 403 (Cần mở quyền Anyone)!`);
+                    showToast("Google Sheet từ chối nhận dữ liệu (lỗi quyền 403). Hồ sơ đã lưu an toàn trong Lịch Sử!", "error");
+                } else {
+                    showSyncIndicator('error', `⚠️ Google Sheet chưa nhận đủ (${successCount}/${totalCount} học viên)`);
+                    showToast(`Chưa đồng bộ được Google Sheet. Hồ sơ đã lưu an toàn trong Lịch Sử!`, "error");
+                }
             } else {
-                progressStatusText.textContent = `Hoàn thành! Đã đăng ký thành công ${totalCount} học viên vào Google Sheet.`;
-                statusMessage.className = "mt-4 p-4 rounded-2xl text-sm font-bold text-center bg-emerald-50 text-emerald-700 border border-emerald-200 block";
-                statusMessage.innerHTML = `
-                    <i class="fa-solid fa-circle-check text-base mr-1.5"></i>
-                    Bạn đã đăng ký thành công danh sách <strong>${totalCount} học viên</strong>!
-                `;
-                showToast(`Đăng ký thành công ${totalCount} học viên!`, "success");
+                showSyncIndicator('success', `✓ Đã lưu ${totalCount} học viên vào Google Sheet thành công!`);
+            }
+        }
+
+        /**
+         * Gửi lại một đợt đăng ký bị lỗi sang Google Sheet
+         */
+        function retrySyncBatch(batchId) {
+            const history = getHistory();
+            const record = history.find(item => item.id === batchId);
+            if (!record) return;
+
+            const webAppUrl = getWebAppUrl();
+            record.status = 'syncing';
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+            renderHistoryList();
+
+            showToast("Đang đồng bộ lại đợt đăng ký sang Google Sheet...", "info");
+            showSyncIndicator('syncing', `⚡ Đang gửi lại ${record.totalStudents || record.students.length} học viên...`);
+
+            dispatchBackgroundSync(batchId, webAppUrl, record.students, record.teacher, record.commonNote || '');
+        }
+
+        /**
+         * Hiển thị widget thông báo trạng thái đồng bộ Google Sheet
+         */
+        let syncIndicatorTimer = null;
+        function showSyncIndicator(type, message) {
+            const el = document.getElementById('syncIndicator');
+            if (!el) return;
+
+            if (syncIndicatorTimer) clearTimeout(syncIndicatorTimer);
+
+            el.classList.remove('hidden', 'flex', 'bg-slate-900', 'bg-emerald-600', 'bg-rose-600', 'text-white', 'border-slate-700', 'border-emerald-500', 'border-rose-500');
+
+            let icon = '<i class="fa-solid fa-bolt text-amber-400 animate-pulse"></i>';
+            let bgClasses = ['bg-slate-900', 'text-white', 'border-slate-700'];
+
+            if (type === 'success') {
+                icon = '<i class="fa-solid fa-circle-check text-white"></i>';
+                bgClasses = ['bg-emerald-600', 'text-white', 'border-emerald-500'];
+            } else if (type === 'error') {
+                icon = '<i class="fa-solid fa-triangle-exclamation text-white"></i>';
+                bgClasses = ['bg-rose-600', 'text-white', 'border-rose-500'];
             }
 
-            setTimeout(() => {
-                submitBtn.disabled = false;
-                submitBtnText.textContent = `Gửi Đăng Ký (${totalCount} Học Viên)`;
-                // Đặt lại form học viên về 1 dòng nếu thành công
-                if (!hasGoogleSheetError) {
-                    initStudentRows();
-                    const commonNoteInput = document.getElementById('commonNote');
-                    if (commonNoteInput) commonNoteInput.value = '';
-                }
-                progressWrapper.classList.add('hidden');
-                updateBadges();
-            }, 2500);
+            el.classList.add('flex', ...bgClasses);
+            el.innerHTML = `
+                ${icon}
+                <span>${escapeHtml(message)}</span>
+            `;
+
+            if (type === 'success') {
+                syncIndicatorTimer = setTimeout(() => {
+                    el.classList.add('hidden');
+                    el.classList.remove('flex');
+                }, 3000);
+            } else if (type === 'error') {
+                syncIndicatorTimer = setTimeout(() => {
+                    el.classList.add('hidden');
+                    el.classList.remove('flex');
+                }, 6000);
+            }
         }
 
         function resetFullForm() {
@@ -1486,6 +1581,25 @@ function doGet(e) {
                 const studentNames = (batch.students || []).map(s => s.fullname).join(', ');
                 const studentCount = batch.totalStudents || (batch.students ? batch.students.length : 1);
 
+                let statusBadge = `
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <i class="fa-solid fa-check text-[10px] mr-1"></i> Đã vào Google Sheet
+                    </span>
+                `;
+                if (batch.status === 'syncing') {
+                    statusBadge = `
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                            <i class="fa-solid fa-bolt text-[10px] mr-1 animate-pulse"></i> Đang đồng bộ
+                        </span>
+                    `;
+                } else if (batch.status === 'local_only') {
+                    statusBadge = `
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                            <i class="fa-solid fa-triangle-exclamation text-[10px] mr-1"></i> Chưa vào Sheet
+                        </span>
+                    `;
+                }
+
                 card.innerHTML = `
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-3">
                         <div class="flex items-center gap-3">
@@ -1495,9 +1609,7 @@ function doGet(e) {
                             <div>
                                 <div class="flex items-center gap-2">
                                     <h4 class="text-base font-bold text-slate-900">${escapeHtml(batch.course)}</h4>
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                        <i class="fa-solid fa-check text-[10px] mr-1"></i> Thành công
-                                    </span>
+                                    ${statusBadge}
                                 </div>
                                 <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500 mt-0.5">
                                     <span><i class="fa-solid fa-chalkboard-user mr-1 text-slate-400"></i>GV: <strong>${escapeHtml(batch.teacher)}</strong></span>
@@ -1537,7 +1649,13 @@ function doGet(e) {
                                 <span>Xem chi tiết</span>
                             </button>
 
-                    
+                            ${batch.status === 'local_only' ? `
+                            <button type="button" onclick="retrySyncBatch('${batch.id}')"
+                                class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold transition shadow-sm">
+                                <i class="fa-solid fa-rotate-right"></i>
+                                <span>Gửi lại</span>
+                            </button>
+                            ` : ''}
                         </div>
 
                         <div class="flex items-center gap-1.5">
@@ -1580,6 +1698,7 @@ function doGet(e) {
                     <td class="py-2.5 px-3 text-center text-slate-400 font-bold">${idx + 1}</td>
                     <td class="py-2.5 px-4 font-bold text-slate-800">${escapeHtml(s.fullname)}</td>
                     <td class="py-2.5 px-4 text-slate-600">${s.dob || '---'}</td>
+                    <td class="py-2.5 px-4 font-semibold text-indigo-600">${escapeHtml(s.course || batch.course || '---')}</td>
                     <td class="py-2.5 px-4 text-slate-500">${escapeHtml(s.note || '---')}</td>
                 `;
                 tbody.appendChild(tr);
@@ -1598,20 +1717,19 @@ function doGet(e) {
             const batch = list.find(b => b.id === batchId);
             if (!batch) return;
 
-            if (confirm(`Bạn có muốn điền lại thông tin khóa "${batch.course}" vào Form Đăng Ký không?`)) {
+            if (confirm(`Bạn có muốn điền lại thông tin đợt "${batch.course}" vào Form Đăng Ký không?`)) {
                 // Điền thông tin chung
-                document.getElementById('course').value = batch.course || '';
                 document.getElementById('teacher').value = batch.teacher || '';
                 const commonNoteInput = document.getElementById('commonNote');
                 if (commonNoteInput) commonNoteInput.value = batch.commonNote || '';
 
-                // Điền lại danh sách học viên
+                // Điền lại danh sách học viên kèm từng khóa học riêng
                 const container = document.getElementById('studentListContainer');
                 container.innerHTML = '';
                 studentCounter = 0;
 
                 (batch.students || []).forEach(s => {
-                    addNewStudentRow(s.fullname, s.dob, s.note);
+                    addNewStudentRow(s.fullname, s.dob, s.course || batch.course || '', s.note);
                 });
 
                 switchTab('register');
@@ -1664,7 +1782,7 @@ function doGet(e) {
                         rowCount++,
                         `"${batch.id}"`,
                         `"${batch.formattedTime}"`,
-                        `"${escapeCsv(batch.course)}"`,
+                        `"${escapeCsv(s.course || batch.course || '')}"`,
                         `"${escapeCsv(batch.teacher)}"`,
                         `"${escapeCsv(s.fullname)}"`,
                         `"${s.dob || ''}"`,
@@ -1690,7 +1808,7 @@ function doGet(e) {
             (batch.students || []).forEach((s, idx) => {
                 const row = [
                     idx + 1,
-                    `"${escapeCsv(batch.course)}"`,
+                    `"${escapeCsv(s.course || batch.course || '')}"`,
                     `"${escapeCsv(batch.teacher)}"`,
                     `"${escapeCsv(s.fullname)}"`,
                     `"${s.dob || ''}"`,

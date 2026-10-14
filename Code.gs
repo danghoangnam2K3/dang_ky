@@ -59,7 +59,7 @@ function doPost(e) {
         "Ngày Sinh",
         "Khóa Học",
         "Giáo Viên Phụ Trách",
-        "Ghi Chú & Ngày Thi"
+        "GHI CHÚ"
       ];
       sheet.appendRow(headers);
       
@@ -77,27 +77,38 @@ function doPost(e) {
     const timeZone = Session.getScriptTimeZone() || "Asia/Ho_Chi_Minh";
     const formattedTime = Utilities.formatDate(now, timeZone, "HH:mm:ss dd/MM/yyyy");
 
-    // Lấy thông tin từ payload gửi lên
-    const fullname = data.fullname || "";
-    const dob = data.dob ? formatDateDisplay(data.dob) : "";
-    const course = data.course || "";
-    const teacher = data.teacher || "";
-    const note = data.note || "";
+    // Hỗ trợ cả 2 chế độ: 1 học viên đơn lẻ HOẶC danh sách nhiều học viên cùng lúc (Batch Siêu Tốc)
+    let studentsList = [];
+    if (data.students && Array.isArray(data.students)) {
+      studentsList = data.students;
+    } else if (Array.isArray(data)) {
+      studentsList = data;
+    } else {
+      studentsList = [data];
+    }
 
-    // Thêm dòng mới vào Google Sheet
-    sheet.appendRow([
-      formattedTime,
-      fullname,
-      dob,
-      course,
-      teacher,
-      note
-    ]);
+    const rowsToAppend = studentsList.map(function(item) {
+      return [
+        formattedTime,
+        item.fullname || "",
+        item.dob ? formatDateDisplay(item.dob) : "",
+        item.course || data.course || "",
+        item.teacher || data.teacher || "",
+        item.note || ""
+      ];
+    });
 
-    // Trả về phản hồi thành công chuẩn JSON
+    if (rowsToAppend.length > 0) {
+      const lastRow = sheet.getLastRow();
+      sheet.getRange(lastRow + 1, 1, rowsToAppend.length, 6).setValues(rowsToAppend);
+    }
+
+    // Trả về phản hồi thành công chuẩn JSON (hỗ trợ cả status và result)
     return ContentService.createTextOutput(JSON.stringify({
       status: "success",
-      message: "Đăng ký thành công!",
+      result: "success",
+      count: rowsToAppend.length,
+      message: "Đăng ký thành công " + rowsToAppend.length + " học viên!",
       timestamp: formattedTime
     })).setMimeType(ContentService.MimeType.JSON);
 
