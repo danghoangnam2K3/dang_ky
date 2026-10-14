@@ -1063,7 +1063,7 @@ function doGet(e) {
                         SĐT / Ghi chú riêng
                     </label>
                     <input type="text" name="student_note" value="${escapeHtml(note)}"
-                        placeholder="Số ĐT hoặc ghi chú..."
+                        placeholder="ghi chú..."
                         class="w-full px-3.5 py-2.5 bg-slate-50/60 border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
                 </td>
                 <td class="py-2 sm:py-3 px-3 text-center student-action-cell">
@@ -1530,11 +1530,7 @@ function doGet(e) {
                                 <span>Xem chi tiết</span>
                             </button>
 
-                            <button type="button" onclick="reuseHistoryBatch('${batch.id}')"
-                                class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold border border-indigo-200 transition" title="Điền lại thông tin khóa này vào form để đăng ký tiếp">
-                                <i class="fa-solid fa-clone"></i>
-                                <span>Điền lại form</span>
-                            </button>
+                    
                         </div>
 
                         <div class="flex items-center gap-1.5">
