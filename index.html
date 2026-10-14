@@ -129,7 +129,8 @@
         }
 
         /* Responsive & Chống tràn cho mọi thiết bị */
-        html, body {
+        html,
+        body {
             overflow-x: hidden;
             width: 100%;
             -webkit-text-size-adjust: 100%;
@@ -137,14 +138,17 @@
 
         /* Chuyển đổi bảng danh sách học viên thành dạng thẻ Card tiện lợi trên điện thoại (< 640px) */
         @media (max-width: 639px) {
-            .responsive-student-table, 
+
+            .responsive-student-table,
             .responsive-student-table tbody {
                 display: block !important;
                 width: 100% !important;
             }
+
             .responsive-student-table thead {
                 display: none !important;
             }
+
             .responsive-student-table tr.student-item-row {
                 display: block !important;
                 margin-bottom: 0.875rem !important;
@@ -155,12 +159,14 @@
                 position: relative !important;
                 box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04) !important;
             }
+
             .responsive-student-table td {
                 display: block !important;
                 width: 100% !important;
                 padding: 0.25rem 0 !important;
                 border: none !important;
             }
+
             .responsive-student-table td.student-stt-cell {
                 display: flex !important;
                 align-items: center !important;
@@ -172,6 +178,7 @@
                 margin-bottom: 0.5rem !important;
                 text-align: left !important;
             }
+
             .responsive-student-table td.student-action-cell {
                 position: absolute !important;
                 top: 0.625rem !important;
@@ -317,7 +324,8 @@
             <form id="datForm" class="space-y-4 sm:space-y-6" onsubmit="handleFormSubmit(event)">
 
                 <!-- THẺ DUY NHẤT: CHỨA ĐẦY ĐỦ THÔNG TIN KHÓA HỌC, GIÁO VIÊN, GHI CHÚ VÀ DANH SÁCH HỌC VIÊN -->
-                <div class="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-sm p-4 sm:p-6 md:p-8 space-y-5 sm:space-y-6">
+                <div
+                    class="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-sm p-4 sm:p-6 md:p-8 space-y-5 sm:space-y-6">
 
                     <!-- Header của Thẻ -->
                     <div
@@ -749,7 +757,8 @@
     <!-- ==================== MODAL: CẤU HÌNH WEB APP URL ==================== -->
     <div id="configModal"
         class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 sm:p-4 md:p-6 bg-slate-900/60 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl sm:rounded-3xl max-w-lg w-full p-4 sm:p-6 md:p-8 shadow-2xl border border-slate-100">
+        <div
+            class="bg-white rounded-2xl sm:rounded-3xl max-w-lg w-full p-4 sm:p-6 md:p-8 shadow-2xl border border-slate-100">
             <div class="flex items-center justify-between pb-4 border-b border-slate-100">
                 <div class="flex items-center gap-3">
                     <div
@@ -920,7 +929,8 @@ function doGet(e) {
     <!-- ==================== MODAL: HƯỚNG DẪN SỬ DỤNG ==================== -->
     <div id="helpModal"
         class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 sm:p-4 md:p-6 bg-slate-900/60 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl sm:rounded-3xl max-w-md w-full p-4 sm:p-6 md:p-8 shadow-2xl border border-slate-100">
+        <div
+            class="bg-white rounded-2xl sm:rounded-3xl max-w-md w-full p-4 sm:p-6 md:p-8 shadow-2xl border border-slate-100">
             <div class="flex items-center justify-between pb-4 border-b border-slate-100">
                 <h3 class="text-base font-bold text-slate-800">Hướng Dẫn Nhanh</h3>
                 <button type="button" onclick="closeHelpModal()" class="text-slate-400 hover:text-slate-600 p-2">
@@ -1381,9 +1391,9 @@ function doGet(e) {
                 statusMessage.className = "mt-4 p-4 rounded-2xl text-sm font-bold text-center bg-emerald-50 text-emerald-700 border border-emerald-200 block";
                 statusMessage.innerHTML = `
                     <i class="fa-solid fa-circle-check text-base mr-1.5"></i>
-                    Đã gửi thành công danh sách <strong>${totalCount} học viên</strong> vào Google Sheet!
+                    Bạn đã đăng lý thành công danh sách <strong>${totalCount} học viên</strong>!
                 `;
-                showToast(`Đăng ký thành công ${totalCount} học viên vào Google Sheet!`, "success");
+                showToast(`Đăng ký thành công ${totalCount} học viên!`, "success");
             }
 
             setTimeout(() => {
