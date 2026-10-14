@@ -4,14 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Hệ thống quản lý và đăng ký kiểm tra thiết bị giám sát thời gian và quãng đường học thực hành lái xe (DAT). Hỗ trợ đăng ký cùng lúc nhiều học viên.">
+    <meta name="description"
+        content="Hệ thống quản lý và đăng ký kiểm tra thiết bị giám sát thời gian và quãng đường học thực hành lái xe (DAT). Hỗ trợ đăng ký cùng lúc nhiều học viên.">
     <meta name="keywords" content="đăng ký DAT, kiểm tra DAT, đào tạo lái xe, quản lý học viên, DAT học lái xe">
     <title>Hệ Thống Đăng Ký Kiểm Tra DAT - Quản Lý Học Viên</title>
 
     <!-- Google Fonts: Inter & Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
 
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -55,8 +58,8 @@
         /* Gradient background mượt mà */
         .page-bg {
             background: radial-gradient(circle at 15% 15%, rgba(79, 70, 229, 0.08) 0%, transparent 40%),
-                        radial-gradient(circle at 85% 85%, rgba(14, 165, 233, 0.08) 0%, transparent 40%),
-                        #f8fafc;
+                radial-gradient(circle at 85% 85%, rgba(14, 165, 233, 0.08) 0%, transparent 40%),
+                #f8fafc;
         }
 
         /* Glassmorphism Header */
@@ -72,13 +75,16 @@
             width: 7px;
             height: 7px;
         }
+
         ::-webkit-scrollbar-track {
             background: #f1f5f9;
         }
+
         ::-webkit-scrollbar-thumb {
             background: #cbd5e1;
             border-radius: 4px;
         }
+
         ::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
@@ -88,10 +94,12 @@
             position: relative;
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
         .nav-tab.active {
             color: #4f46e5;
             background-color: #eef2ff;
         }
+
         .nav-tab.active::after {
             content: '';
             position: absolute;
@@ -109,11 +117,13 @@
                 transform: translateX(110%);
                 opacity: 0;
             }
+
             to {
                 transform: translateX(0);
                 opacity: 1;
             }
         }
+
         .toast-animate {
             animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
@@ -123,10 +133,12 @@
             .no-print {
                 display: none !important;
             }
+
             body {
                 background: #ffffff !important;
                 color: #000000 !important;
             }
+
             .print-only {
                 display: block !important;
             }
@@ -140,36 +152,39 @@
     <header class="glass-header sticky top-0 z-40 transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
-                
+
                 <!-- Logo & Brand Title -->
                 <div class="flex items-center gap-3.5">
-                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-600 via-indigo-600 to-cyan-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25 ring-4 ring-indigo-50">
-                        <i class="fa-solid fa-car-side text-xl"></i>
-                    </div>
+                    <img src="img/Logo.png" alt="Logo"
+                        class="w-12 h-12 rounded-full object-contain bg-white shadow-md border border-slate-200/80 p-0.5 ring-4 ring-indigo-50">
                     <div>
                         <div class="flex items-center gap-2">
-                            <span class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-800 bg-clip-text text-transparent">
+                            <span
+                                class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-800 bg-clip-text text-transparent">
                                 DAT PRO
                             </span>
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-indigo-100 text-indigo-700 tracking-wide border border-indigo-200">
+                            <span
+                                class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-indigo-100 text-indigo-700 tracking-wide border border-indigo-200">
                                 v2.5
                             </span>
                         </div>
                         <p class="text-xs font-medium text-slate-500 hidden sm:block">
-                            Cổng Đăng Ký Kiểm Tra Giám Sát DAT Đào Tạo Lái Xe
+                            Cổng Đăng Ký Kiểm Tra Dữ Liệu DAT
                         </p>
                     </div>
                 </div>
 
                 <!-- Navigation Tabs (ĐĂNG KÝ & LỊCH SỬ ĐĂNG KÝ) -->
-                <nav class="flex items-center p-1.5 bg-slate-100/90 rounded-2xl border border-slate-200/80 shadow-inner" aria-label="Tabs" id="mainNavBar">
-                    
+                <nav class="flex items-center p-1.5 bg-slate-100/90 rounded-2xl border border-slate-200/80 shadow-inner"
+                    aria-label="Tabs" id="mainNavBar">
+
                     <!-- TAB 1: ĐĂNG KÝ -->
                     <button type="button" id="tabBtnRegister" onclick="switchTab('register')"
                         class="nav-tab active flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:text-indigo-600 focus:outline-none transition-all">
                         <i class="fa-solid fa-file-signature text-base"></i>
                         <span>Đăng Ký</span>
-                        <span id="badgeRegisterCount" class="inline-flex items-center justify-center px-2 py-0.5 text-xs font-semibold bg-indigo-600 text-white rounded-full">
+                        <span id="badgeRegisterCount"
+                            class="inline-flex items-center justify-center px-2 py-0.5 text-xs font-semibold bg-indigo-600 text-white rounded-full">
                             1
                         </span>
                     </button>
@@ -179,14 +194,15 @@
                         class="nav-tab flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:text-indigo-600 focus:outline-none transition-all">
                         <i class="fa-solid fa-clock-rotate-left text-base"></i>
                         <span>Lịch Sử Đăng Ký</span>
-                        <span id="badgeHistoryCount" class="inline-flex items-center justify-center px-2 py-0.5 text-xs font-semibold bg-slate-200 text-slate-700 rounded-full">
+                        <span id="badgeHistoryCount"
+                            class="inline-flex items-center justify-center px-2 py-0.5 text-xs font-semibold bg-slate-200 text-slate-700 rounded-full">
                             0
                         </span>
                     </button>
                 </nav>
 
-                <!-- Quick Action Buttons -->
-                <div class="hidden lg:flex items-center gap-2.5">
+                <!-- Quick Action Buttons (Đã ẩn) -->
+                <div class="hidden items-center gap-2.5">
                     <button type="button" onclick="openConfigModal()" title="Cài đặt kết nối Google Sheet"
                         class="p-2.5 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition border border-transparent hover:border-indigo-100">
                         <i class="fa-solid fa-sliders text-base"></i>
@@ -209,13 +225,17 @@
         <!-- VIEW 1: TAB ĐĂNG KÝ (HỖ TRỢ ĐĂNG KÝ CÙNG LÚC NHIỀU TÊN)   -->
         <!-- ======================================================== -->
         <section id="viewRegister" class="space-y-6">
-            
+
             <!-- Banner Thông Báo Tiêu Đề -->
-            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-900 via-indigo-800 to-blue-900 text-white p-6 sm:p-8 shadow-xl shadow-indigo-950/10">
-                <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none"></div>
+            <div
+                class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-900 via-indigo-800 to-blue-900 text-white p-6 sm:p-8 shadow-xl shadow-indigo-950/10">
+                <div
+                    class="absolute -right-10 -bottom-10 w-64 h-64 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none">
+                </div>
                 <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
-                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-cyan-300 text-xs font-semibold mb-3 border border-white/10">
+                        <div
+                            class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-cyan-300 text-xs font-semibold mb-3 border border-white/10">
                             <i class="fa-solid fa-users-gear"></i>
                             Đăng ký theo nhóm học viên
                         </div>
@@ -223,76 +243,67 @@
                             Đăng Ký Kiểm Tra Phiên Học DAT
                         </h1>
                         <p class="text-indigo-200 text-sm mt-1.5 max-w-2xl">
-                            Điền thông tin khóa đào tạo, giáo viên và nhập danh sách nhiều học viên cùng lúc để tự động gửi dữ liệu đồng bộ vào Google Sheet.
+                            Đối với học viên đã hoàn thành DAT chưa tốt nghiệp.
                         </p>
                     </div>
 
-                    <!-- Nút thao tác nhanh trên banner -->
-                    <div class="flex items-center gap-3">
-                        <button type="button" onclick="openBulkInputModal()"
-                            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm shadow-lg shadow-cyan-500/30 transition transform hover:-translate-y-0.5 active:translate-y-0">
-                            <i class="fa-solid fa-paste"></i>
-                            <span>Dán Nhanh Danh Sách</span>
-                        </button>
+                    <!-- Logo Trung Tâm trên banner -->
+                    <div class="flex items-center justify-center shrink-0">
+                        <div class="relative group">
+                            <div
+                                class="absolute -inset-1 bg-gradient-to-r from-cyan-400 via-amber-300 to-indigo-400 rounded-full blur-md opacity-50 group-hover:opacity-80 transition duration-300">
+                            </div>
+                            <img src="img/Logo.png" alt="Logo Trung Tâm Đào Tạo Lái Xe An Cư"
+                                class="relative w-24 h-24 sm:w-28 sm:h-28 object-contain rounded-full bg-white p-1 shadow-2xl border-2 border-white/60 transform transition duration-300 hover:scale-105">
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Form Đăng Ký Chính (Đã gộp thành 1 thẻ duy nhất) -->
             <form id="datForm" class="space-y-6" onsubmit="handleFormSubmit(event)">
-                
+
                 <!-- THẺ DUY NHẤT: CHỨA ĐẦY ĐỦ THÔNG TIN KHÓA HỌC, GIÁO VIÊN, GHI CHÚ VÀ DANH SÁCH HỌC VIÊN -->
                 <div class="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 sm:p-8 space-y-6">
-                    
+
                     <!-- Header của Thẻ -->
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-5 border-b border-slate-100 gap-4">
+                    <div
+                        class="flex flex-col sm:flex-row sm:items-center justify-between pb-5 border-b border-slate-100 gap-4">
                         <div class="flex items-center gap-3">
-                            <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-600 to-cyan-500 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-indigo-500/20">
+                            <div
+                                class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-600 to-cyan-500 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-indigo-500/20">
                                 <i class="fa-solid fa-file-pen text-base"></i>
                             </div>
                             <div>
                                 <div class="flex items-center gap-2">
-                                    <h2 class="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">Thông Tin Đăng Ký Kiểm Tra DAT</h2>
-                                    <span id="studentTotalBadge" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-50 text-indigo-600 border border-indigo-200">
+                                    <h2 class="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">Thông Tin
+                                        Đăng Ký Kiểm Tra DAT</h2>
+                                    <span id="studentTotalBadge"
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-50 text-indigo-600 border border-indigo-200">
                                         1 học viên
                                     </span>
                                 </div>
-                                <p class="text-xs text-slate-500 mt-0.5">Nhập thông tin khóa học, giáo viên và danh sách học viên đăng ký</p>
+                                <p class="text-xs text-slate-500 mt-0.5">Nhập thông tin khóa học, giáo viên và danh sách
+                                    học viên đăng ký</p>
                             </div>
                         </div>
 
-                        <!-- Các nút thao tác nhanh trên danh sách -->
-                        <div class="flex flex-wrap items-center gap-2">
-                            <button type="button" onclick="openBulkInputModal()"
-                                class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-xl bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 transition">
-                                <i class="fa-solid fa-list-check"></i>
-                                <span>Dán nhiều tên</span>
-                            </button>
 
-                            <button type="button" onclick="addNewStudentRow()"
-                                class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm shadow-indigo-500/20 transition">
-                                <i class="fa-solid fa-plus"></i>
-                                <span>+ Thêm học viên</span>
-                            </button>
-
-                            <button type="button" onclick="clearAllStudentRows()" title="Xóa tất cả danh sách"
-                                class="inline-flex items-center justify-center w-8 h-8 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition border border-slate-200">
-                                <i class="fa-regular fa-trash-can text-sm"></i>
-                            </button>
-                        </div>
                     </div>
 
                     <!-- PHẦN 1: THÔNG TIN KHÓA HỌC, GIÁO VIÊN & GHI CHÚ -->
                     <div class="space-y-4">
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                            
+
                             <!-- Khóa học -->
                             <div>
-                                <label for="course" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                                <label for="course"
+                                    class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
                                     <i class="fa-solid fa-graduation-cap text-indigo-500 mr-1.5"></i>
                                     Khóa học <span class="text-rose-500">*</span>
                                 </label>
-                                <input type="text" id="course" required placeholder="Ví dụ: Khóa B2 - K35" list="courseSuggestions"
+                                <input type="text" id="course" required placeholder="Ví dụ: Khóa B2 - K35"
+                                    list="courseSuggestions"
                                     class="w-full px-4 py-2.5 bg-slate-50/70 border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition font-medium text-sm">
                                 <datalist id="courseSuggestions">
                                     <option value="Khóa B11 - Tự Động K40">
@@ -304,7 +315,8 @@
 
                             <!-- Giáo viên phụ trách -->
                             <div>
-                                <label for="teacher" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                                <label for="teacher"
+                                    class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
                                     <i class="fa-solid fa-chalkboard-user text-indigo-500 mr-1.5"></i>
                                     Giáo viên phụ trách <span class="text-rose-500">*</span>
                                 </label>
@@ -312,23 +324,35 @@
                                     class="w-full px-4 py-2.5 bg-slate-50/70 border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition font-medium text-sm">
                             </div>
 
-                            <!-- Ngày dự kiến kiểm tra / Ngày nộp -->
+                            <!-- Ngày dự kiến kiểm tra / Ngày nộp (Cố định ngày hiện tại, không cho chỉnh sửa) -->
                             <div>
-                                <label for="regDate" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
-                                    <i class="fa-solid fa-calendar-day text-indigo-500 mr-1.5"></i>
-                                    Ngày kiểm tra DAT
-                                </label>
-                                <input type="date" id="regDate"
-                                    class="w-full px-4 py-2.5 bg-slate-50/70 border border-slate-300 rounded-xl text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition font-medium text-sm">
+                                <div class="flex items-center justify-between mb-2">
+                                    <label for="regDate"
+                                        class="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                                        <i class="fa-solid fa-calendar-day text-indigo-500 mr-1.5"></i>
+                                        Ngày kiểm tra DAT
+                                    </label>
+                                    <span
+                                        class="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">
+                                        <i class="fa-solid fa-lock text-[10px] text-slate-400"></i>
+                                    </span>
+                                </div>
+                                <div class="relative cursor-not-allowed"
+                                    title="Ngày kiểm tra được cố định tự động theo ngày hiện tại, không cho phép chỉnh sửa">
+                                    <input type="date" id="regDate" readonly tabindex="-1"
+                                        class="w-full px-4 py-2.5 bg-slate-100/90 border border-slate-300 rounded-xl text-slate-600 font-semibold text-sm cursor-not-allowed select-none focus:outline-none pointer-events-none">
+                                </div>
                             </div>
 
                             <!-- Ghi chú chung -->
                             <div class="md:col-span-2 lg:col-span-3">
-                                <label for="commonNote" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                                <label for="commonNote"
+                                    class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
                                     <i class="fa-regular fa-note-sticky text-indigo-500 mr-1.5"></i>
                                     Ghi chú (tùy chọn)
                                 </label>
-                                <input type="text" id="commonNote" placeholder="Ví dụ: Đăng ký ca sáng xe 14 / Thi thử DAT đợt 1..."
+                                <input type="text" id="commonNote"
+                                    placeholder="Ví dụ: Đăng ký kiểm tra dữ liệu/ đăng ký tốt nghiệp mới "
                                     class="w-full px-4 py-2.5 bg-slate-50/70 border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition font-medium text-sm">
                             </div>
                         </div>
@@ -352,7 +376,8 @@
                         <div class="overflow-x-auto rounded-2xl border border-slate-200/90 shadow-inner">
                             <table class="w-full text-left border-collapse">
                                 <thead>
-                                    <tr class="bg-slate-50/90 text-slate-600 text-xs font-bold uppercase tracking-wider border-b border-slate-200">
+                                    <tr
+                                        class="bg-slate-50/90 text-slate-600 text-xs font-bold uppercase tracking-wider border-b border-slate-200">
                                         <th class="py-3 px-3 w-12 text-center">STT</th>
                                         <th class="py-3 px-4 min-w-[220px]">
                                             Họ và tên học viên <span class="text-rose-500">*</span>
@@ -375,7 +400,8 @@
                         <div class="flex flex-col sm:flex-row items-center justify-between gap-2 pt-1">
                             <p class="text-xs text-slate-500 flex items-center gap-1.5">
                                 <i class="fa-solid fa-lightbulb text-amber-500"></i>
-                                Mẹo: Bấm <span class="font-bold text-slate-700">Tab</span> hoặc phím <span class="font-bold text-slate-700">Enter</span> để chuyển nhanh giữa các ô nhập.
+                                Mẹo: Bấm <span class="font-bold text-slate-700">Tab</span> hoặc phím <span
+                                    class="font-bold text-slate-700">Enter</span> để chuyển nhanh giữa các ô nhập.
                             </p>
                         </div>
                     </div>
@@ -386,7 +412,8 @@
                             <div>
                                 <h4 class="text-sm font-bold text-slate-800">Xác nhận gửi hồ sơ đăng ký</h4>
                                 <p class="text-xs text-slate-500 mt-0.5" id="summaryDescription">
-                                    Đang chuẩn bị gửi đăng ký cho <span class="font-bold text-indigo-600" id="summaryStudentCount">1</span> học viên vào bảng tính Google Sheet.
+                                    Đang chuẩn bị gửi đăng ký cho <span class="font-bold text-indigo-600"
+                                        id="summaryStudentCount">1</span> học viên vào bảng tính Google Sheet.
                                 </p>
                             </div>
 
@@ -411,12 +438,15 @@
                                 <span id="progressPercent">0%</span>
                             </div>
                             <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
-                                <div id="progressBar" class="h-full bg-gradient-to-r from-indigo-500 to-cyan-500 transition-all duration-300" style="width: 0%"></div>
+                                <div id="progressBar"
+                                    class="h-full bg-gradient-to-r from-indigo-500 to-cyan-500 transition-all duration-300"
+                                    style="width: 0%"></div>
                             </div>
                         </div>
 
                         <!-- Thông báo trạng thái kết quả -->
-                        <div id="statusMessage" class="hidden mt-4 p-4 rounded-xl text-sm font-semibold text-center transition-all"></div>
+                        <div id="statusMessage"
+                            class="hidden mt-4 p-4 rounded-xl text-sm font-semibold text-center transition-all"></div>
                     </div>
 
                 </div>
@@ -429,12 +459,14 @@
         <!-- VIEW 2: TAB LỊCH SỬ ĐĂNG KÝ                             -->
         <!-- ======================================================== -->
         <section id="viewHistory" class="hidden space-y-6">
-            
+
             <!-- Header của Tab Lịch Sử -->
             <div class="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 sm:p-8">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-100">
+                <div
+                    class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-100">
                     <div>
-                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-bold mb-2">
+                        <div
+                            class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-bold mb-2">
                             <i class="fa-solid fa-clock-rotate-left"></i>
                             Nhật ký đăng ký trực tuyến
                         </div>
@@ -446,20 +478,7 @@
                         </p>
                     </div>
 
-                    <!-- Nút thao tác trên Tab Lịch sử -->
-                    <div class="flex flex-wrap items-center gap-2.5">
-                        <button type="button" onclick="exportHistoryToCSV()"
-                            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 font-bold text-xs transition">
-                            <i class="fa-solid fa-file-excel text-sm"></i>
-                            <span>Xuất File Excel / CSV</span>
-                        </button>
 
-                        <button type="button" onclick="confirmClearHistory()"
-                            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 font-bold text-xs transition">
-                            <i class="fa-regular fa-trash-can text-sm"></i>
-                            <span>Xóa Lịch Sử</span>
-                        </button>
-                    </div>
                 </div>
 
                 <!-- Thống kê nhanh (KPI Cards) -->
@@ -467,7 +486,8 @@
                     <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/70">
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-semibold text-slate-500">Tổng đợt đăng ký</span>
-                            <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm">
                                 <i class="fa-solid fa-folder-open"></i>
                             </div>
                         </div>
@@ -477,7 +497,8 @@
                     <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/70">
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-semibold text-slate-500">Tổng học viên đã gửi</span>
-                            <div class="w-8 h-8 rounded-lg bg-cyan-100 text-cyan-600 flex items-center justify-center text-sm">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-cyan-100 text-cyan-600 flex items-center justify-center text-sm">
                                 <i class="fa-solid fa-user-check"></i>
                             </div>
                         </div>
@@ -487,20 +508,25 @@
                     <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/70">
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-semibold text-slate-500">Đợt đăng ký mới nhất</span>
-                            <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center text-sm">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center text-sm">
                                 <i class="fa-solid fa-clock"></i>
                             </div>
                         </div>
-                        <div class="mt-2 text-sm font-bold text-slate-800 truncate" id="kpiLatestDate">Chưa có dữ liệu</div>
+                        <div class="mt-2 text-sm font-bold text-slate-800 truncate" id="kpiLatestDate">Chưa có dữ liệu
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Bộ Lọc & Tìm Kiếm Lịch Sử -->
-            <div class="bg-white rounded-2xl border border-slate-200/90 p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div
+                class="bg-white rounded-2xl border border-slate-200/90 p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
                 <div class="relative w-full sm:w-80">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                    <input type="text" id="historySearchInput" oninput="renderHistoryList()" placeholder="Tìm theo tên học viên, giáo viên, khóa..."
+                    <i
+                        class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input type="text" id="historySearchInput" oninput="renderHistoryList()"
+                        placeholder="Tìm theo tên học viên, giáo viên, khóa..."
                         class="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
                 <div class="text-xs text-slate-500 flex items-center gap-2">
@@ -516,7 +542,8 @@
 
             <!-- Empty State nếu chưa có lịch sử -->
             <div id="historyEmptyState" class="hidden bg-white rounded-3xl border border-slate-200/80 p-12 text-center">
-                <div class="w-20 h-20 mx-auto rounded-3xl bg-indigo-50 text-indigo-500 flex items-center justify-center text-3xl mb-4">
+                <div
+                    class="w-20 h-20 mx-auto rounded-3xl bg-indigo-50 text-indigo-500 flex items-center justify-center text-3xl mb-4">
                     <i class="fa-regular fa-folder-open"></i>
                 </div>
                 <h3 class="text-lg font-bold text-slate-800">Chưa có lịch sử đăng ký nào</h3>
@@ -535,12 +562,15 @@
     </main>
 
     <!-- ==================== MODAL: DÁN NHANH DANH SÁCH ==================== -->
-    <div id="bulkInputModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-opacity">
-        <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-slate-100 max-h-[90vh] flex flex-col">
-            
+    <div id="bulkInputModal"
+        class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-opacity">
+        <div
+            class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-slate-100 max-h-[90vh] flex flex-col">
+
             <div class="flex items-center justify-between pb-4 border-b border-slate-100">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-cyan-100 text-cyan-700 flex items-center justify-center text-lg">
+                    <div
+                        class="w-10 h-10 rounded-xl bg-cyan-100 text-cyan-700 flex items-center justify-center text-lg">
                         <i class="fa-solid fa-paste"></i>
                     </div>
                     <div>
@@ -548,7 +578,8 @@
                         <p class="text-xs text-slate-500">Sao chép từ Excel hoặc danh sách văn bản và dán vào đây</p>
                     </div>
                 </div>
-                <button type="button" onclick="closeBulkInputModal()" class="text-slate-400 hover:text-slate-600 p-2 text-lg">
+                <button type="button" onclick="closeBulkInputModal()"
+                    class="text-slate-400 hover:text-slate-600 p-2 text-lg">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -559,13 +590,16 @@
                         <i class="fa-solid fa-circle-info"></i> Định dạng hỗ trợ:
                     </p>
                     <ul class="list-disc list-inside space-y-0.5 text-indigo-800/90 pl-1">
-                        <li>Mỗi dòng là 1 học viên (ví dụ: <span class="font-mono font-semibold">Nguyễn Văn An</span>).</li>
-                        <li>Hoặc kèm ngày sinh cách nhau bởi dấu phẩy, tab hoặc gạch ngang (ví dụ: <span class="font-mono font-semibold">Trần Thị Bình, 1998-05-20</span>).</li>
+                        <li>Mỗi dòng là 1 học viên (ví dụ: <span class="font-mono font-semibold">Nguyễn Văn An</span>).
+                        </li>
+                        <li>Hoặc kèm ngày sinh cách nhau bởi dấu phẩy, tab hoặc gạch ngang (ví dụ: <span
+                                class="font-mono font-semibold">Trần Thị Bình, 1998-05-20</span>).</li>
                         <li>Bạn có thể copy trực tiếp 1 cột Họ tên từ Excel dán vào.</li>
                     </ul>
                 </div>
 
-                <textarea id="bulkInputTextarea" rows="9" placeholder="Dán danh sách vào đây... Ví dụ:&#10;Nguyễn Văn An&#10;Trần Thị Bình, 1995-10-12&#10;Lê Hoàng Cường&#10;Phạm Minh Đức, 2000-02-25"
+                <textarea id="bulkInputTextarea" rows="9"
+                    placeholder="Dán danh sách vào đây... Ví dụ:&#10;Nguyễn Văn An&#10;Trần Thị Bình, 1995-10-12&#10;Lê Hoàng Cường&#10;Phạm Minh Đức, 2000-02-25"
                     class="w-full p-4 border border-slate-300 rounded-2xl text-xs sm:text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50"></textarea>
             </div>
 
@@ -585,12 +619,15 @@
     </div>
 
     <!-- ==================== MODAL: CHI TIẾT ĐỢT ĐĂNG KÝ ==================== -->
-    <div id="historyDetailModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-        <div class="bg-white rounded-3xl max-w-3xl w-full p-6 sm:p-8 shadow-2xl border border-slate-100 max-h-[90vh] flex flex-col">
-            
+    <div id="historyDetailModal"
+        class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div
+            class="bg-white rounded-3xl max-w-3xl w-full p-6 sm:p-8 shadow-2xl border border-slate-100 max-h-[90vh] flex flex-col">
+
             <div class="flex items-center justify-between pb-4 border-b border-slate-100">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center text-lg">
+                    <div
+                        class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center text-lg">
                         <i class="fa-solid fa-list-check"></i>
                     </div>
                     <div>
@@ -598,7 +635,8 @@
                         <p class="text-xs text-slate-500" id="modalDetailSubtitle">Ngày gửi: --</p>
                     </div>
                 </div>
-                <button type="button" onclick="closeHistoryDetailModal()" class="text-slate-400 hover:text-slate-600 p-2 text-lg">
+                <button type="button" onclick="closeHistoryDetailModal()"
+                    class="text-slate-400 hover:text-slate-600 p-2 text-lg">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -658,11 +696,13 @@
     </div>
 
     <!-- ==================== MODAL: CẤU HÌNH WEB APP URL ==================== -->
-    <div id="configModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div id="configModal"
+        class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
         <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-100">
             <div class="flex items-center justify-between pb-4 border-b border-slate-100">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-lg">
+                    <div
+                        class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-lg">
                         <i class="fa-solid fa-sliders"></i>
                     </div>
                     <div>
@@ -703,26 +743,35 @@
             </div>
 
             <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-2">
-                <button type="button" onclick="closeConfigModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100">Đóng</button>
-                <button type="button" onclick="saveConfigUrl()" class="px-5 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition">Lưu cấu hình</button>
+                <button type="button" onclick="closeConfigModal()"
+                    class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100">Đóng</button>
+                <button type="button" onclick="saveConfigUrl()"
+                    class="px-5 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition">Lưu
+                    cấu hình</button>
             </div>
         </div>
     </div>
 
     <!-- ==================== MODAL: HƯỚNG DẪN CẤP QUYỀN GOOGLE APPS SCRIPT (SỬA LỖI 403) ==================== -->
-    <div id="appsScriptGuideModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-        <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-slate-100 max-h-[90vh] flex flex-col">
+    <div id="appsScriptGuideModal"
+        class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div
+            class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-slate-100 max-h-[90vh] flex flex-col">
             <div class="flex items-center justify-between pb-4 border-b border-slate-100">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-lg">
+                    <div
+                        class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-lg">
                         <i class="fa-solid fa-shield-halved"></i>
                     </div>
                     <div>
-                        <h3 class="text-base sm:text-lg font-bold text-slate-800">Khắc Phục Lỗi Google Sheet Không Nhận Dữ Liệu</h3>
-                        <p class="text-xs text-rose-500 font-semibold">Nguyên nhân: Quyền truy cập bị chặn (Lỗi 403 Forbidden)</p>
+                        <h3 class="text-base sm:text-lg font-bold text-slate-800">Khắc Phục Lỗi Google Sheet Không Nhận
+                            Dữ Liệu</h3>
+                        <p class="text-xs text-rose-500 font-semibold">Nguyên nhân: Quyền truy cập bị chặn (Lỗi 403
+                            Forbidden)</p>
                     </div>
                 </div>
-                <button type="button" onclick="closeAppsScriptGuideModal()" class="text-slate-400 hover:text-slate-600 p-2 text-lg">
+                <button type="button" onclick="closeAppsScriptGuideModal()"
+                    class="text-slate-400 hover:text-slate-600 p-2 text-lg">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -734,7 +783,9 @@
                         Tại sao gửi báo thành công mà trong Google Sheet không có?
                     </p>
                     <p class="leading-relaxed">
-                        Hệ thống đã gửi request kiểm tra tới Web App URL và Google phản hồi: <strong>"Truy cập bị từ chối (403 Forbidden)"</strong>. Điều này xảy ra do khi bạn bấm <em>Triển khai (Deploy)</em> trên Google Sheet, bạn chưa cấp quyền cho <strong>"Bất kỳ ai (Anyone)"</strong> truy cập!
+                        Hệ thống đã gửi request kiểm tra tới Web App URL và Google phản hồi: <strong>"Truy cập bị từ
+                            chối (403 Forbidden)"</strong>. Điều này xảy ra do khi bạn bấm <em>Triển khai (Deploy)</em>
+                        trên Google Sheet, bạn chưa cấp quyền cho <strong>"Bất kỳ ai (Anyone)"</strong> truy cập!
                     </p>
                 </div>
 
@@ -742,29 +793,37 @@
                     <h4 class="font-bold text-slate-900 text-sm">Các bước sửa quyền trên Google Sheet (Chỉ 1 phút):</h4>
                     <ol class="list-decimal list-inside space-y-2 pl-1 leading-relaxed text-slate-600">
                         <li>Mở file <strong>Google Trang Tính (Google Sheet)</strong> của bạn.</li>
-                        <li>Trên thanh menu, chọn <strong>Tiện ích mở rộng (Extensions)</strong> &gt; <strong>Apps Script</strong>.</li>
-                        <li>Ở góc trên bên phải, bấm nút <strong>Triển khai (Deploy)</strong> &gt; chọn <strong>Quản lý bản triển khai (Manage deployments)</strong> (hoặc Triển khai mới).</li>
+                        <li>Trên thanh menu, chọn <strong>Tiện ích mở rộng (Extensions)</strong> &gt; <strong>Apps
+                                Script</strong>.</li>
+                        <li>Ở góc trên bên phải, bấm nút <strong>Triển khai (Deploy)</strong> &gt; chọn <strong>Quản lý
+                                bản triển khai (Manage deployments)</strong> (hoặc Triển khai mới).</li>
                         <li>Bấm biểu tượng cây bút chì (Chỉnh sửa) hoặc tạo bản mới:
-                            <div class="mt-1.5 ml-4 p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1 font-medium">
-                                <p>• <strong>Thực thi dưới dạng (Execute as):</strong> Chọn <u>Tôi (Me / email của bạn)</u></p>
-                                <p class="text-rose-600 font-bold">• <strong>Ai có quyền truy cập (Who has access):</strong> BẮT BUỘC CHỌN <u>Bất kỳ ai (Anyone)</u></p>
+                            <div
+                                class="mt-1.5 ml-4 p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1 font-medium">
+                                <p>• <strong>Thực thi dưới dạng (Execute as):</strong> Chọn <u>Tôi (Me / email của
+                                        bạn)</u></p>
+                                <p class="text-rose-600 font-bold">• <strong>Ai có quyền truy cập (Who has
+                                        access):</strong> BẮT BUỘC CHỌN <u>Bất kỳ ai (Anyone)</u></p>
                             </div>
                         </li>
-                        <li>Bấm <strong>Triển khai (Deploy)</strong>, bấm cấp quyền nếu Google hỏi, sau đó <strong>Sao chép Web App URL mới</strong>.</li>
+                        <li>Bấm <strong>Triển khai (Deploy)</strong>, bấm cấp quyền nếu Google hỏi, sau đó <strong>Sao
+                                chép Web App URL mới</strong>.</li>
                         <li>Quay lại trang này, dán URL mới vào ô Cài đặt và bấm <strong>Lưu cấu hình</strong>.</li>
                     </ol>
                 </div>
 
                 <div class="space-y-2 pt-2 border-t border-slate-100">
                     <div class="flex items-center justify-between">
-                        <h4 class="font-bold text-slate-900">Mã nguồn Google Apps Script chuẩn (Nếu bạn cần tạo mới):</h4>
+                        <h4 class="font-bold text-slate-900">Mã nguồn Google Apps Script chuẩn (Nếu bạn cần tạo mới):
+                        </h4>
                         <button type="button" onclick="copyAppsScriptCode()"
                             class="inline-flex items-center gap-1 px-3 py-1 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-lg font-bold transition">
                             <i class="fa-regular fa-copy"></i>
                             <span>Sao chép code</span>
                         </button>
                     </div>
-                    <pre class="p-3.5 bg-slate-900 text-slate-200 rounded-2xl overflow-x-auto text-[11px] font-mono leading-relaxed" id="sampleAppsScriptCode">function doPost(e) {
+                    <pre class="p-3.5 bg-slate-900 text-slate-200 rounded-2xl overflow-x-auto text-[11px] font-mono leading-relaxed"
+                        id="sampleAppsScriptCode">function doPost(e) {
   try {
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
     if (sheet.getLastRow() === 0) {
@@ -808,7 +867,8 @@ function doGet(e) {
     </div>
 
     <!-- ==================== MODAL: HƯỚNG DẪN SỬ DỤNG ==================== -->
-    <div id="helpModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div id="helpModal"
+        class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
         <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-100">
             <div class="flex items-center justify-between pb-4 border-b border-slate-100">
                 <h3 class="text-base font-bold text-slate-800">Hướng Dẫn Nhanh</h3>
@@ -817,18 +877,27 @@ function doGet(e) {
                 </button>
             </div>
             <div class="py-4 text-xs text-slate-600 space-y-3">
-                <p>1. <span class="font-bold text-slate-800">Đăng ký nhiều tên:</span> Điền Khóa học &amp; Giáo viên 1 lần, sau đó bấm <span class="text-indigo-600 font-bold">+ Thêm học viên</span> hoặc bấm <span class="text-cyan-600 font-bold">Dán Nhanh Danh Sách</span> để dán nhiều người cùng lúc.</p>
-                <p>2. <span class="font-bold text-slate-800">Xem lịch sử:</span> Bấm vào mục <span class="text-indigo-600 font-bold">Lịch Sử Đăng Ký</span> trên thanh header để xem tất cả các đợt đã nộp, xuất file Excel hoặc in danh sách.</p>
-                <p>3. <span class="font-bold text-rose-600">Lỗi không vào Google Sheet:</span> Bấm vào biểu tượng Cài đặt trên góc phải để kiểm tra kết nối và xem hướng dẫn mở quyền <span class="font-bold text-slate-800">"Anyone"</span>.</p>
+                <p>1. <span class="font-bold text-slate-800">Đăng ký nhiều tên:</span> Điền Khóa học &amp; Giáo viên 1
+                    lần, sau đó bấm <span class="text-indigo-600 font-bold">+ Thêm học viên</span> hoặc bấm <span
+                        class="text-cyan-600 font-bold">Dán Nhanh Danh Sách</span> để dán nhiều người cùng lúc.</p>
+                <p>2. <span class="font-bold text-slate-800">Xem lịch sử:</span> Bấm vào mục <span
+                        class="text-indigo-600 font-bold">Lịch Sử Đăng Ký</span> trên thanh header để xem tất cả các đợt
+                    đã nộp, xuất file Excel hoặc in danh sách.</p>
+                <p>3. <span class="font-bold text-rose-600">Lỗi không vào Google Sheet:</span> Bấm vào biểu tượng Cài
+                    đặt trên góc phải để kiểm tra kết nối và xem hướng dẫn mở quyền <span
+                        class="font-bold text-slate-800">"Anyone"</span>.</p>
             </div>
             <div class="pt-3 border-t border-slate-100 text-right">
-                <button type="button" onclick="closeHelpModal()" class="px-5 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700">Đã hiểu</button>
+                <button type="button" onclick="closeHelpModal()"
+                    class="px-5 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700">Đã
+                    hiểu</button>
             </div>
         </div>
     </div>
 
     <!-- ==================== TOAST CONTAINER ==================== -->
-    <div id="toastContainer" class="fixed top-24 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
+    <div id="toastContainer" class="fixed top-24 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none">
+    </div>
 
     <!-- ==================== FOOTER ==================== -->
     <footer class="mt-auto py-6 border-t border-slate-200/80 bg-white/70 text-center text-xs text-slate-500">
@@ -857,7 +926,11 @@ function doGet(e) {
             // Thiết lập ngày mặc định là hôm nay
             const todayStr = new Date().toISOString().split('T')[0];
             const regDateInput = document.getElementById('regDate');
-            if (regDateInput) regDateInput.value = todayStr;
+            if (regDateInput) {
+                regDateInput.value = todayStr;
+                regDateInput.addEventListener('keydown', (e) => e.preventDefault());
+                regDateInput.addEventListener('focus', (e) => e.target.blur());
+            }
 
             // Khởi tạo dòng học viên đầu tiên
             initStudentRows();
@@ -988,7 +1061,7 @@ function doGet(e) {
         function updateStudentSummary() {
             const rows = document.querySelectorAll('.student-item-row');
             const count = rows.length;
-            
+
             const badgeRegisterCount = document.getElementById('badgeRegisterCount');
             const studentTotalBadge = document.getElementById('studentTotalBadge');
             const summaryStudentCount = document.getElementById('summaryStudentCount');
@@ -1093,7 +1166,7 @@ function doGet(e) {
 
             const course = document.getElementById('course').value.trim();
             const teacher = document.getElementById('teacher').value.trim();
-            const regDate = document.getElementById('regDate').value;
+            const regDate = document.getElementById('regDate').value || new Date().toISOString().split('T')[0];
             const commonNote = document.getElementById('commonNote').value.trim();
 
             const studentRows = document.querySelectorAll('.student-item-row');
@@ -1163,7 +1236,7 @@ function doGet(e) {
                 };
 
                 progressStatusText.textContent = `Đang gửi học viên ${i + 1}/${totalCount}: ${s.fullname}...`;
-                
+
                 try {
                     const res = await fetch(webAppUrl, {
                         method: 'POST',
