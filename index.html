@@ -957,7 +957,7 @@ function doGet(e) {
         // ==========================================
         // CẤU HÌNH & TRẠNG THÁI TOÀN CỤC
         // ==========================================
-        const DEFAULT_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyuVzBfNMv-SO_mO5i0rNpkbgzMs0FjmtPEFo5e4_wlnziHSvQHFzllN99JJPDoZUy0sQ/exec";
+        const DEFAULT_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyhnxYH6dsAA-EqvtyaNeV2uXdS8I6LmK6wHtX46YC3djSH1MrhkC-Jw_jSHMNPjXSEpg/exec";
         const STORAGE_KEY_HISTORY = "dat_registration_history";
         const STORAGE_KEY_CONFIG = "dat_webapp_url";
 
@@ -983,10 +983,15 @@ function doGet(e) {
             // Cập nhật badges và hiển thị lịch sử
             updateBadges();
             renderHistoryList();
+
+            // Luôn đồng bộ URL Apps Script mới vào cấu hình
+            if (DEFAULT_WEB_APP_URL) {
+                localStorage.setItem(STORAGE_KEY_CONFIG, DEFAULT_WEB_APP_URL);
+            }
         });
 
         function getWebAppUrl() {
-            return localStorage.getItem(STORAGE_KEY_CONFIG) || DEFAULT_WEB_APP_URL;
+            return DEFAULT_WEB_APP_URL || localStorage.getItem(STORAGE_KEY_CONFIG);
         }
 
         // ==========================================
@@ -1226,7 +1231,8 @@ function doGet(e) {
             const course = document.getElementById('course').value.trim();
             const teacher = document.getElementById('teacher').value.trim();
             const regDate = document.getElementById('regDate').value || new Date().toISOString().split('T')[0];
-            const commonNote = document.getElementById('commonNote').value.trim();
+            const commonNoteInput = document.getElementById('commonNote');
+            const commonNote = commonNoteInput ? commonNoteInput.value.trim() : '';
 
             const studentRows = document.querySelectorAll('.student-item-row');
             const students = [];
@@ -1385,7 +1391,8 @@ function doGet(e) {
                 // Đặt lại form học viên về 1 dòng nếu thành công
                 if (!hasGoogleSheetError) {
                     initStudentRows();
-                    document.getElementById('commonNote').value = '';
+                    const commonNoteInput = document.getElementById('commonNote');
+                    if (commonNoteInput) commonNoteInput.value = '';
                 }
                 progressWrapper.classList.add('hidden');
                 updateBadges();
@@ -1595,7 +1602,8 @@ function doGet(e) {
                 // Điền thông tin chung
                 document.getElementById('course').value = batch.course || '';
                 document.getElementById('teacher').value = batch.teacher || '';
-                document.getElementById('commonNote').value = batch.commonNote || '';
+                const commonNoteInput = document.getElementById('commonNote');
+                if (commonNoteInput) commonNoteInput.value = batch.commonNote || '';
 
                 // Điền lại danh sách học viên
                 const container = document.getElementById('studentListContainer');
