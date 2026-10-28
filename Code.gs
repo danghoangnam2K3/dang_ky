@@ -55,6 +55,7 @@ function doPost(e) {
     if (sheet.getLastRow() === 0) {
       const headers = [
         "Thời Gian Đăng Ký",
+        "ĐÃ NHẬP",
         "Họ Và Tên Học Viên",
         "Ngày Sinh",
         "Khóa Học",
@@ -90,6 +91,7 @@ function doPost(e) {
     const rowsToAppend = studentsList.map(function(item) {
       return [
         formattedTime,
+        "", // Cột "ĐÃ NHẬP" để trống cho người quản lý tự đánh dấu
         item.fullname || "",
         item.dob ? formatDateDisplay(item.dob) : "",
         item.course || data.course || "",
@@ -100,7 +102,8 @@ function doPost(e) {
 
     if (rowsToAppend.length > 0) {
       const lastRow = sheet.getLastRow();
-      sheet.getRange(lastRow + 1, 1, rowsToAppend.length, 6).setValues(rowsToAppend);
+      sheet.getRange(lastRow + 1, 1, rowsToAppend.length, 7).setValues(rowsToAppend);
+      SpreadsheetApp.flush();
     }
 
     // Trả về phản hồi thành công chuẩn JSON (hỗ trợ cả status và result)
